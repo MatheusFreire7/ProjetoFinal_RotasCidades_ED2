@@ -3,14 +3,21 @@ package br.unicamp.approtascidades;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,40 +25,53 @@ import java.util.LinkedList;
 
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
+import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    Cidade[] vetorCidade;
-    CaminhoCidade[] caminhoCidades;
+    PilhaVetor<Cidade> vetorCidade;
+    PilhaVetor<CaminhoCidade> vetorCaminho;
     ActivityMainBinding binding;
 
-    public Cidade[] getVetorCidade() {
-        return vetorCidade;
-    }
 
-    public void setVetorCidade(Cidade[] vetorCidade) {
-        this.vetorCidade = vetorCidade;
-    }
-
-    public CaminhoCidade[] getCaminhoCidades() {
-        return caminhoCidades;
-    }
-
-    public void setCaminhoCidades(CaminhoCidade[] caminhoCidades) {
-        this.caminhoCidades = caminhoCidades;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        binding.btnLer.setOnClickListener(new View.OnClickListener() {
+        vetorCidade = new PilhaVetor<>();
+        vetorCaminho = new PilhaVetor<>();
+
+        ImageView mapa;
+
+        mapa = findViewById(R.id.mapa);
+        Picasso.get().load(R.drawable.mapa).into(mapa);
+        binding.btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    lerArquivoCidade();
+                    boolean checkedRecursao = ((CheckBox) binding.chkRecursao).isChecked();
+                    boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
+
+                    if(checkedRecursao == true)
+                    {
+                        lerCidades();
+                    }
+
+                    if(checkedDijkstra == true)
+                    {
+                        lerArquivoCidade();
+                    }
+
+                    if(checkedDijkstra == false && checkedRecursao == false)
+                        Toast.makeText(MainActivity.this, "Clique em um dos checkedBox para poder Buscar", Toast.LENGTH_LONG).show();
+
+
                 } catch (IOException | NullPointerException e) {
+                    Toast.makeText(MainActivity.this, "Erro na Leitura do Arquivo", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
@@ -69,12 +89,30 @@ public class MainActivity extends AppCompatActivity {
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
                 JSONObject objCidade = new JSONObject(linha);
-                binding.txtJson.setText(objCidade.toString());
+                binding.lista.setText(objCidade.toString());
             }
             inputStream.close();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void lerCidades(){
+        String result;
+        try {
+            Resources res = getResources();
+            InputStream in_s = res.openRawResource(R.raw.cidades);
+
+            byte[] b = new byte[in_s.available()];
+            in_s.read(b);
+            result = new String(b);
+            //Cidade umCid= new Cidade(result);
+            binding.lista.setText(result);
+            //vetorCidade.Empilhar(umCid);
+        } catch (Exception e) {
+            // e.printStackTrace();
+            result = "Error: can't show file.";
         }
     }
 
@@ -89,12 +127,34 @@ public class MainActivity extends AppCompatActivity {
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
                 JSONObject objCaminho = new JSONObject(linha);
-                binding.txtJson.setText(objCaminho.toString());
+                binding.lista.setText(objCaminho.toString());
             }
             inputStream.close();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    public void checkBox(View view) {
+
+        boolean checked = ((CheckBox) view).isChecked();
+
+        switch(view.getId()) {
+            case R.id.chkRecursao:
+                if (checked)
+                {
+                    Toast.makeText(this, "Clicou em recursão", Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.chkDijkstra:
+                if (checked)
+                {
+                    Toast.makeText(this, "Clicou em Dijkstra", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 }

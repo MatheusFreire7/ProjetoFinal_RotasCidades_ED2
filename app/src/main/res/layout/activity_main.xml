@@ -1,23 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnLer"
-        android:text="Ler Arquivo"/>
-
-    <TextView
-        android:layout_margin="20dp"
-        android:id="@+id/txtJson"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello!"/>
+    tools:context=".MainActivity"
+    android:orientation="horizontal">
 
 
-</LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/txtOrigem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="De:"
+            android:textSize="20sp" />
+
+        <android.widget.NumberPicker
+            android:id="@+id/numOrigem"
+            android:layout_width="wrap_content"
+            android:layout_height="30sp"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/txtOrigem" />
+
+        <TextView
+            android:id="@+id/txtDestino"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtOrigem"
+            android:layout_marginTop="9dp"
+            android:text="Para:"
+            android:textSize="20sp" />
+
+        <android.widget.NumberPicker
+            android:id="@+id/numDestino"
+            android:layout_width="wrap_content"
+            android:layout_height="30sp"
+            android:layout_below="@+id/numOrigem"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="6dp"
+            android:layout_toRightOf="@+id/txtDestino" />
+
+
+        <CheckBox
+            android:id="@+id/chkRecursao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtDestino"
+            android:text="Recursão" />
+
+        <CheckBox
+            android:id="@+id/chkDijkstra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chkRecursao"
+            android:text="Dijkstra" />
+
+        <Button
+            android:id="@+id/btnBuscar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtDestino"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/chkRecursao"
+            android:text="Buscar" />
+
+        <TextView
+            android:id="@+id/lista"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/chkDijkstra"
+            android:layout_marginTop="-3dp"
+            android:scrollbars="vertical"
+            android:text=""
+            android:textSize="20dp" />
+
+        <ImageView
+            android:id="@+id/mapa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lista"
+            android:layout_marginTop="-96dp"
+            android:layout_toRightOf="@id/lista"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
