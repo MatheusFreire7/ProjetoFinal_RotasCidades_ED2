@@ -1,0 +1,23 @@
+  0Acheron        0,113530,28857
+  1Arena          0,687260,29248
+  2Arrakeen       0,052980,48682
+  3Bakhuysen      0,674560,52002 
+  4Bradbury       0,407470,74365
+  5Burroughs      0,712650,37939 
+  6Cairo          0,216060,51025
+  7Dumont         0,557370,48096
+  8Echus Overlook 0,241940,35498
+  9Esperança      0,789060,52588
+ 10Gondor         0,933110,58545
+ 11Lakefront      0,693360,63818  
+ 12Lowell         0,894530,38428 
+ 13Moria          0,900390,70947
+ 14Nicosia        0,162350,50732
+ 15Odessa         0,633060,67529
+ 16Perseverança   0,665280,81787
+ 17Rowan          0,565670,66553
+ 18Senzeni Na     0,189210,66260
+ 19Sheffield      0,158940,45849
+ 20Temperança     0,513430,67822
+ 21Tharsis        0,129640,39502
+ 22Underhill      0,378910,51318
