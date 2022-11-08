@@ -6,8 +6,10 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,11 +31,9 @@ import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    PilhaVetor<Cidade> vetorCidade;
-    PilhaVetor<CaminhoCidade> vetorCaminho;
+    Cidade vetorCidade[];
+    CaminhoCidade vetorCaminho[][];
     ActivityMainBinding binding;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,19 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        vetorCidade = new PilhaVetor<>();
-        vetorCaminho = new PilhaVetor<>();
+        Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.cidades_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
+        Spinner spinner2 = (Spinner) findViewById(R.id.numDestino);
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
+                this, R.array.cidades_array, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(adapter);
+        spinner2.setOnItemSelectedListener(new MyOnItemSelectedListener());
 
         ImageView mapa;
 
@@ -59,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
                     if(checkedRecursao == true)
                     {
                         lerCidades();
+//                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
+//                        String spinnerString = null;
+//                        spinnerString = sp.getSelectedItem().toString();
+//                        int nPos = sp.getSelectedItemPosition();
+//
+//
+//                        Toast.makeText(getApplicationContext(), "getSelectedItem=" + spinnerString,
+//                                Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getApplicationContext(), "getSelectedItemPosition=" + nPos,
+//                                Toast.LENGTH_LONG).show();
                     }
 
                     if(checkedDijkstra == true)

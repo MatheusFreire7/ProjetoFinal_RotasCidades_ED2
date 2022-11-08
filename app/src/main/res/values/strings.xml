@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">AppRotasCidades</string>
+    <string name="prompt">Escolha uma Cidade</string>
+    <string-array name="cidades_array">
+        <item>Acheron</item>
+        <item>Arena</item>
+        <item>Arrakeen</item>
+        <item>Bakhuysen</item>
+        <item>Bradbury</item>
+        <item>Burroughs</item>
+        <item>Cairo</item>
+        <item>Dumont</item>
+        <item>Echus Overlook</item>
+        <item>Esperança</item>
+        <item>Gondor</item>
+        <item>Lakefront</item>
+        <item>Lowell</item>
+        <item>Moria</item>
+        <item>Nicosia</item>
+        <item>Odessa</item>
+        <item>Perseverança</item>
+        <item>Rowan</item>
+        <item>Senzeni Na</item>
+        <item>Sheffield</item>
+        <item>Temperança</item>
+        <item>Tharsis</item>
+        <item>Underhill</item>
+    </string-array>
 </resources>

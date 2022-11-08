@@ -19,12 +19,12 @@
             android:text="De:"
             android:textSize="20sp" />
 
-        <android.widget.NumberPicker
+        <Spinner
             android:id="@+id/numOrigem"
-            android:layout_width="wrap_content"
-            android:layout_height="30sp"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@+id/txtOrigem" />
+            android:layout_toRightOf="@id/txtOrigem"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/prompt"/>
 
         <TextView
             android:id="@+id/txtDestino"
@@ -35,15 +35,13 @@
             android:text="Para:"
             android:textSize="20sp" />
 
-        <android.widget.NumberPicker
+        <Spinner
+            android:layout_toRightOf="@id/txtDestino"
+            android:layout_below="@id/numOrigem"
             android:id="@+id/numDestino"
-            android:layout_width="wrap_content"
-            android:layout_height="30sp"
-            android:layout_below="@+id/numOrigem"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="6dp"
-            android:layout_toRightOf="@+id/txtDestino" />
-
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/prompt"/>
 
         <CheckBox
             android:id="@+id/chkRecursao"
@@ -74,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/chkDijkstra"
             android:layout_marginTop="-3dp"
+            android:maxHeight="200dp"
             android:scrollbars="vertical"
             android:text=""
             android:textSize="20dp" />
@@ -84,7 +83,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/lista"
             android:layout_marginTop="-96dp"
-            android:layout_toRightOf="@id/lista"/>
+            android:layout_toRightOf="@id/chkRecursao"
+            android:maxWidth="500dp"
+            android:maxHeight="500dp" />
 
     </RelativeLayout>
 
