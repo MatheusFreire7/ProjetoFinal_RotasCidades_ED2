@@ -80,8 +80,7 @@
             android:id="@+id/mapa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/gvLista"
-            android:layout_marginTop="-96dp"
+            android:layout_below="@id/numDestino"
             android:layout_toRightOf="@id/btnBuscar"
             android:maxWidth="500dp"
             android:maxHeight="500dp" />

@@ -35,7 +35,7 @@ import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     //Cidade vetorCidade[];
-    //CaminhoCidade matrizCaminho[][];
+    CaminhoCidade matrizCaminho[][];
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
     ActivityMainBinding binding;
@@ -53,23 +53,7 @@ public class MainActivity extends AppCompatActivity {
         gvListaAdapter gvAdapter = new gvListaAdapter(this, listaCaminho);
         binding.gvLista.setAdapter(gvAdapter);
 
-        //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
-        Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.cidades_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
-        Spinner spinner2 = (Spinner) findViewById(R.id.numDestino);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
-                this, R.array.cidades_array, android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(adapter);
-        spinner2.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
         ImageView mapa;
-
         mapa = findViewById(R.id.mapa);
         Picasso.get().load(R.drawable.mapa).into(mapa); //Carregamos a imagem do Mapa de marte com a biblioteca Picasso
 
@@ -84,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
                     {
                         lerArquivoCidadeJson();
                         listaCompletaCidades();
+
+
 //                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
 //                        String spinnerString = null;
 //                        spinnerString = sp.getSelectedItem().toString();
@@ -182,14 +168,28 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("X: "+listaCidade.get(i).getCordenadaX());
                 System.out.println("Y: "+listaCidade.get(i).getCordenadaY());
             }
+
+            //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
+            Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                    this,  R.array.cidades_array, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
+            Spinner spinner2 = (Spinner) findViewById(R.id.numDestino);
+            ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
+                    this, R.array.cidades_array, android.R.layout.simple_spinner_item);
+            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner2.setAdapter(adapter);
+            spinner2.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
         }else{
             System.out.println("Lista vazia, necessário cadastrar cidades");
         }
     }
 
-
-
-    public void lerArquivoCaminho() throws IOException {
+    public void lerArquivoCaminhoJson() throws IOException {
         try {
             AssetManager assetManager = getResources().getAssets();
             InputStream inputStream = assetManager.open("Caminho.json");
@@ -201,8 +201,14 @@ public class MainActivity extends AppCompatActivity {
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
                 JSONObject objCaminho = new JSONObject(linha);
-                CaminhoCidade umCam = new CaminhoCidade(objCaminho.toString());
-                //matrizCaminho[numCidades][numCidades] = umCam;
+                String idOrigem = objCaminho.getString("IdOrigem");
+                String idDestino = objCaminho.getString("IdDestino");
+                String distancia = objCaminho.getString("Distancia");
+                String tempo = objCaminho.getString("Tempo");
+                String custo = objCaminho.getString("Custo");
+                String linhaNova = idOrigem+idDestino+distancia+tempo+custo;
+                CaminhoCidade umCam = new CaminhoCidade(linhaNova);
+                matrizCaminho[numCidades][numCidades] = umCam;
             }
             inputStream.close();
         }

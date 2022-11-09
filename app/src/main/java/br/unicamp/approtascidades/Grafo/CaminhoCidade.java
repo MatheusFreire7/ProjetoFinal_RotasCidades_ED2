@@ -8,6 +8,18 @@ public class CaminhoCidade
     private int tempo;
     private int custo;
 
+    final int tamanhoIdOrigem = 2,
+              tamanhoIdDestino = 2,
+              tamanhoDistancia = 4,
+              tamanhoTempo = 2,
+              tamanhoCusto = 3;
+
+    final int iniIdOrigem = 0,
+              iniIdDestino = iniIdOrigem + tamanhoIdOrigem,
+              iniDistancia = iniIdDestino + tamanhoIdDestino,
+              iniTempo = iniDistancia + tamanhoDistancia,
+              iniCusto = iniTempo + tamanhoTempo;
+
     public CaminhoCidade(String idOrigem, String idDestino, int distancia, int tempo, int custo) {
         this.idOrigem = idOrigem;
         this.idDestino = idDestino;
@@ -16,8 +28,16 @@ public class CaminhoCidade
         this.custo = custo;
     }
 
-    public CaminhoCidade(String idOrigem) {
-        this.idOrigem = idOrigem;
+    public CaminhoCidade(String linha)
+    {
+        if(linha != null)
+        {
+            this.idOrigem = linha.substring(0, tamanhoIdOrigem).replace(" ","");
+            this.idDestino = linha.substring(iniIdDestino, tamanhoIdDestino).replace(" ", "");
+            this.distancia = Integer.parseInt(linha.substring(iniDistancia,tamanhoDistancia).replace(" ", ""));
+            this.tempo = Integer.parseInt(linha.substring(iniTempo, tamanhoTempo).replace(" ", ""));
+            this.custo = Integer.parseInt(linha.substring(iniCusto, tamanhoCusto).replace(" ", ""));
+        }
     }
 
     public CaminhoCidade(String idOrigem, String idDestino) {
