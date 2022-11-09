@@ -21,10 +21,11 @@
 
         <Spinner
             android:id="@+id/numOrigem"
-            android:layout_toRightOf="@id/txtOrigem"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:prompt="@string/prompt"/>
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@id/txtOrigem"
+            android:prompt="@string/prompt" />
 
         <TextView
             android:id="@+id/txtDestino"
@@ -40,6 +41,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/numOrigem"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="13dp"
             android:layout_toRightOf="@id/txtDestino"
             android:prompt="@string/prompt" />
 
@@ -66,24 +69,20 @@
             android:layout_toRightOf="@id/chkRecursao"
             android:text="Buscar" />
 
-        <TextView
-            android:id="@+id/lista"
-            android:layout_width="200dp"
+        <GridView
+            android:id="@+id/gvLista"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/chkDijkstra"
-            android:layout_marginTop="-3dp"
-            android:maxHeight="200dp"
-            android:scrollbars="vertical"
-            android:text=""
-            android:textSize="20dp" />
+            android:numColumns="1" />
 
         <ImageView
             android:id="@+id/mapa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/lista"
+            android:layout_below="@id/gvLista"
             android:layout_marginTop="-96dp"
-            android:layout_toRightOf="@id/chkRecursao"
+            android:layout_toRightOf="@id/btnBuscar"
             android:maxWidth="500dp"
             android:maxHeight="500dp" />
 

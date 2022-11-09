@@ -20,6 +20,11 @@ public class CaminhoCidade
         this.idOrigem = idOrigem;
     }
 
+    public CaminhoCidade(String idOrigem, String idDestino) {
+        this.idOrigem = idOrigem;
+        this.idDestino = idDestino;
+    }
+
     public String getIdOrigem() {
         return idOrigem;
     }

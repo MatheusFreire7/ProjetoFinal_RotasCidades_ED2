@@ -47,6 +47,13 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        ArrayList<CaminhoCidade> listaCaminho = new ArrayList<CaminhoCidade>();
+        listaCaminho.add(new CaminhoCidade("1","2")); // teste do gvListaAdapter
+        listaCaminho.add(new CaminhoCidade("1","3"));
+        gvListaAdapter gvAdapter = new gvListaAdapter(this, listaCaminho);
+        binding.gvLista.setAdapter(gvAdapter);
+
+        //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
         Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this, R.array.cidades_array, android.R.layout.simple_spinner_item);
@@ -63,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView mapa;
 
-
         mapa = findViewById(R.id.mapa);
-        Picasso.get().load(R.drawable.mapa).into(mapa);
+        Picasso.get().load(R.drawable.mapa).into(mapa); //Carregamos a imagem do Mapa de marte com a biblioteca Picasso
+
         binding.btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    boolean checkedRecursao = ((CheckBox) binding.chkRecursao).isChecked();
+                    boolean checkedRecursao = ((CheckBox) binding.chkRecursao).isChecked(); // vericamos se os checkedBox estão clicados
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
 
                     if(checkedRecursao == true)
