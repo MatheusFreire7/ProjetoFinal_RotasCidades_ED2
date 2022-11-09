@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -23,7 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
@@ -31,8 +34,10 @@ import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    Cidade vetorCidade[];
-    CaminhoCidade vetorCaminho[][];
+    //Cidade vetorCidade[];
+    //CaminhoCidade matrizCaminho[][];
+    List<Cidade> listaCidade = new ArrayList<Cidade>();
+    List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
     ActivityMainBinding binding;
 
     @Override
@@ -58,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         ImageView mapa;
 
+
         mapa = findViewById(R.id.mapa);
         Picasso.get().load(R.drawable.mapa).into(mapa);
         binding.btnBuscar.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
                     if(checkedRecursao == true)
                     {
-                        lerCidades();
+                        lerArquivoCidadeJson();
+                        listaCompletaCidades();
 //                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
 //                        String spinnerString = null;
 //                        spinnerString = sp.getSelectedItem().toString();
@@ -84,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
                     if(checkedDijkstra == true)
                     {
-                        lerArquivoCidade();
+                        lerArquivoCidadeJson();
+                        listaCompletaCidades();
                     }
 
                     if(checkedDijkstra == false && checkedRecursao == false)
@@ -99,18 +107,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void lerArquivoCidade() throws IOException {
+    public void lerArquivoCidadeJson() throws IOException {
         try {
             AssetManager assetManager = getResources().getAssets();
-            InputStream inputStream = assetManager.open("CidadesMarte.txt");
+            InputStream inputStream = assetManager.open("cidadeCorreto.json");
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String linha;
+            String idCidade = "";
+            int contCidades = 0;
             LinkedList<String> linhas = new LinkedList<String>();
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
-                JSONObject objCidade = new JSONObject(linha);
-                binding.lista.setText(objCidade.toString());
+               JSONObject objCidade = new JSONObject(linha);
+               if(contCidades < 10)
+               {
+                    idCidade = " "+objCidade.getString("IdCidade");
+               }
+               if(contCidades >= 10)
+               {
+                   idCidade = objCidade.getString("IdCidade");
+               }
+               String nomeCidade = objCidade.getString("NomeCidade");
+               String cordenadaX = objCidade.getString("CordenadaX");
+               String cordenadaY = objCidade.getString("CordenadaY");
+               String linhaNova = idCidade+nomeCidade+cordenadaX+cordenadaY;
+                Cidade umCid = new Cidade(linhaNova);
+                listaCidade.add(umCid);
+                Log.d("Cidade", umCid.toString());
+                contCidades++;
             }
             inputStream.close();
         }
@@ -119,23 +144,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void lerCidades(){
-        String result;
+    public void lerArquivoCidadeTexto() throws IOException {
         try {
-            Resources res = getResources();
-            InputStream in_s = res.openRawResource(R.raw.cidades);
-
-            byte[] b = new byte[in_s.available()];
-            in_s.read(b);
-            result = new String(b);
-            //Cidade umCid= new Cidade(result);
-            binding.lista.setText(result);
-            //vetorCidade.Empilhar(umCid);
-        } catch (Exception e) {
-            // e.printStackTrace();
-            result = "Error: can't show file.";
+            AssetManager assetManager = getResources().getAssets();
+            InputStream inputStream = assetManager.open("CidadesMarte.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String linha;
+            int contCidades = 0;
+            LinkedList<String> linhas = new LinkedList<String>();
+            while ((linha = bufferedReader.readLine())!= null){
+                linhas.add(linha);
+                Cidade umCid = new Cidade(linha);
+                listaCidade.add(umCid);
+                Log.d("Cidade", umCid.toString());
+                contCidades++;
+            }
+            inputStream.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    public void listaCompletaCidades(){
+        if(listaCidade != null){
+            for(int i = 0; i< listaCidade.size(); i++){
+                System.out.println("Nome: "+listaCidade.get(i).getNomeCidade());
+                System.out.println("Id: "+listaCidade.get(i).getIdCidade());
+                System.out.println("X: "+listaCidade.get(i).getCordenadaX());
+                System.out.println("Y: "+listaCidade.get(i).getCordenadaY());
+            }
+        }else{
+            System.out.println("Lista vazia, necessário cadastrar cidades");
+        }
+    }
+
+
 
     public void lerArquivoCaminho() throws IOException {
         try {
@@ -144,11 +189,13 @@ public class MainActivity extends AppCompatActivity {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String linha;
+            int numCidades = 23;
             LinkedList<String> linhas = new LinkedList<String>();
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
                 JSONObject objCaminho = new JSONObject(linha);
-                binding.lista.setText(objCaminho.toString());
+                CaminhoCidade umCam = new CaminhoCidade(objCaminho.toString());
+                //matrizCaminho[numCidades][numCidades] = umCam;
             }
             inputStream.close();
         }

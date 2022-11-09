@@ -36,12 +36,12 @@
             android:textSize="20sp" />
 
         <Spinner
-            android:layout_toRightOf="@id/txtDestino"
-            android:layout_below="@id/numOrigem"
             android:id="@+id/numDestino"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:prompt="@string/prompt"/>
+            android:layout_below="@id/numOrigem"
+            android:layout_toRightOf="@id/txtDestino"
+            android:prompt="@string/prompt" />
 
         <CheckBox
             android:id="@+id/chkRecursao"
