@@ -1,0 +1,28 @@
+{"IdCidadeOrigem":" 0","IdCidadeDestino":" 8","Distancia":2300,"Tempo":19,"Custo":100}
+{"IdCidadeOrigem":" 8","IdCidadeDestino":" 6","Distancia":1900,"Tempo":15,"Custo": 90}
+{"IdCidadeOrigem":" 8","IdCidadeDestino":"19","Distancia":1700,"Tempo":13,"Custo": 80}
+{"IdCidadeOrigem":"19","IdCidadeDestino":"21","Distancia": 400,"Tempo": 5,"Custo":100}
+{"IdCidadeOrigem":"19","IdCidadeDestino":" 6","Distancia":1100,"Tempo":10,"Custo": 70}
+{"IdCidadeOrigem":"19","IdCidadeDestino":"14","Distancia": 300,"Tempo": 2,"Custo": 30}
+{"IdCidadeOrigem":" 6","IdCidadeDestino":"18","Distancia":2000,"Tempo":13,"Custo": 80}
+{"IdCidadeOrigem":" 6","IdCidadeDestino":"22","Distancia":4000,"Tempo":20,"Custo":120}
+{"IdCidadeOrigem":"18","IdCidadeDestino":"10","Distancia":5500,"Tempo":30,"Custo":200}
+{"IdCidadeOrigem":"14","IdCidadeDestino":" 2","Distancia":2200,"Tempo":14,"Custo": 75}
+{"IdCidadeOrigem":" 2","IdCidadeDestino":"10","Distancia":3500,"Tempo":17,"Custo":100}
+{"IdCidadeOrigem":" 4","IdCidadeDestino":"22","Distancia":3000,"Tempo":18,"Custo":110}
+{"IdCidadeOrigem":"22","IdCidadeDestino":"17","Distancia":4140,"Tempo":21,"Custo":130}
+{"IdCidadeOrigem":"22","IdCidadeDestino":" 7","Distancia":4050,"Tempo":20,"Custo":110}
+{"IdCidadeOrigem":" 4","IdCidadeDestino":"15","Distancia":4800,"Tempo":27,"Custo":160}
+{"IdCidadeOrigem":"17","IdCidadeDestino":"15","Distancia":1100,"Tempo": 9,"Custo": 60}
+{"IdCidadeOrigem":"17","IdCidadeDestino":"11","Distancia":2100,"Tempo":17,"Custo": 95}
+{"IdCidadeOrigem":"15","IdCidadeDestino":" 3","Distancia":1400,"Tempo":11,"Custo": 65}
+{"IdCidadeOrigem":"15","IdCidadeDestino":" 9","Distancia":4030,"Tempo":21,"Custo":100}
+{"IdCidadeOrigem":"15","IdCidadeDestino":"11","Distancia":1010,"Tempo": 7,"Custo": 50}
+{"IdCidadeOrigem":"15","IdCidadeDestino":"20","Distancia":2350,"Tempo":14,"Custo": 90}
+{"IdCidadeOrigem":"15","IdCidadeDestino":"16","Distancia":1500,"Tempo":12,"Custo": 75}
+{"IdCidadeOrigem":" 7","IdCidadeDestino":" 5","Distancia":3800,"Tempo":18,"Custo": 95}
+{"IdCidadeOrigem":" 5","IdCidadeDestino":" 1","Distancia":1000,"Tempo": 8,"Custo": 60}
+{"IdCidadeOrigem":" 5","IdCidadeDestino":"12","Distancia":3980,"Tempo":20,"Custo":120}
+{"IdCidadeOrigem":"20","IdCidadeDestino":"10","Distancia":3900,"Tempo":20,"Custo":110}
+{"IdCidadeOrigem":"10","IdCidadeDestino":"13","Distancia":1200,"Tempo":10,"Custo": 60}
+{"IdCidadeOrigem":"10","IdCidadeDestino":"12","Distancia":2000,"Tempo":16,"Custo": 80}

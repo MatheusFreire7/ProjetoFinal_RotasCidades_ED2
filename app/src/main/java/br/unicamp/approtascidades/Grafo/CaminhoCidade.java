@@ -1,12 +1,14 @@
 package br.unicamp.approtascidades.Grafo;
 
+import android.util.Log;
+
 public class CaminhoCidade
 {
     private String idOrigem;
     private String idDestino;
     private int distancia;
     private int tempo;
-    private int custo;
+    private String custo;
 
     final int tamanhoIdOrigem = 2,
               tamanhoIdDestino = 2,
@@ -20,7 +22,7 @@ public class CaminhoCidade
               iniTempo = iniDistancia + tamanhoDistancia,
               iniCusto = iniTempo + tamanhoTempo;
 
-    public CaminhoCidade(String idOrigem, String idDestino, int distancia, int tempo, int custo) {
+    public CaminhoCidade(String idOrigem, String idDestino, int distancia, int tempo, String custo) {
         this.idOrigem = idOrigem;
         this.idDestino = idDestino;
         this.distancia = distancia;
@@ -32,11 +34,12 @@ public class CaminhoCidade
     {
         if(linha != null)
         {
+            Log.d("linha", linha);
             this.idOrigem = linha.substring(0, tamanhoIdOrigem).replace(" ","");
-            this.idDestino = linha.substring(iniIdDestino, tamanhoIdDestino).replace(" ", "");
-            this.distancia = Integer.parseInt(linha.substring(iniDistancia,tamanhoDistancia).replace(" ", ""));
-            this.tempo = Integer.parseInt(linha.substring(iniTempo, tamanhoTempo).replace(" ", ""));
-            this.custo = Integer.parseInt(linha.substring(iniCusto, tamanhoCusto).replace(" ", ""));
+            this.idDestino = linha.substring(iniIdDestino, iniIdDestino+tamanhoIdDestino).replace(" ", "");
+            this.distancia = Integer.parseInt(linha.substring(iniDistancia, iniDistancia+tamanhoDistancia));
+            this.tempo = Integer.parseInt(linha.substring(iniTempo, iniTempo+ tamanhoTempo));
+            this.custo = linha.substring(iniCusto, iniCusto+tamanhoCusto).replace(" ", "");
         }
     }
 
@@ -77,11 +80,11 @@ public class CaminhoCidade
         this.tempo = tempo;
     }
 
-    public int getCusto() {
+    public String getCusto() {
         return custo;
     }
 
-    public void setCusto(int custo) {
+    public void setCusto(String custo) {
         this.custo = custo;
     }
 }

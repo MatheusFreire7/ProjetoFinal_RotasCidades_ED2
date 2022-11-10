@@ -10,8 +10,45 @@ public class Grafo {
     private final int NUM_VERTICES = 20;
     private Vertice[] vertices;
     private int[][] adjMatrix;
-    int numVerts;
-    GridView gridView;
+    private int numVerts;
+    private  GridView gridView;
+    private int linha, coluna = 0;
+
+    public int getNUM_VERTICES() {
+        return NUM_VERTICES;
+    }
+
+    public Vertice[] getVertices() {
+        return vertices;
+    }
+
+    public void setVertices(Vertice[] vertices) {
+        this.vertices = vertices;
+    }
+
+    public int[][] getAdjMatrix() {
+        return adjMatrix;
+    }
+
+    public void setAdjMatrix(int[][] adjMatrix) {
+        this.adjMatrix = adjMatrix;
+    }
+
+    public int getNumVerts() {
+        return numVerts;
+    }
+
+    public void setNumVerts(int numVerts) {
+        this.numVerts = numVerts;
+    }
+
+    public GridView getGridView() {
+        return gridView;
+    }
+
+    public void setGridView(GridView gridView) {
+        this.gridView = gridView;
+    }
 
 
     public Grafo(GridView gridView)
@@ -24,6 +61,12 @@ public class Grafo {
             for (int k = 0; k < NUM_VERTICES; k++)
                 adjMatrix[j][k] = 0;
     }
+
+    public Grafo(int tamanhoLinhas, int tamanhoColunas)
+    {
+        adjMatrix = new int[tamanhoLinhas][tamanhoColunas];
+    }
+
 
     public void NovoVertice(String label)
     {
@@ -143,7 +186,5 @@ public class Grafo {
             resultado += gPilha.Desempilhar() + " "; // desempilha para exibir
         return resultado;
     }
-
-
 
 }

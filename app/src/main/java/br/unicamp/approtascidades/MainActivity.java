@@ -28,17 +28,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import br.unicamp.approtascidades.Backtracking.GrafoBactracking;
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
+import br.unicamp.approtascidades.Grafo.Grafo;
 import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     //Cidade vetorCidade[];
-    CaminhoCidade matrizCaminho[][];
+    int matrizCaminho[][];
+    GrafoBactracking grafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
     ActivityMainBinding binding;
+    int numCidades = 23;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         mapa = findViewById(R.id.mapa);
         Picasso.get().load(R.drawable.mapa).into(mapa); //Carregamos a imagem do Mapa de marte com a biblioteca Picasso
 
+
         binding.btnBuscar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
                     {
                         lerArquivoCidadeJson();
                         listaCompletaCidades();
-
-
+                        lerArquivoCaminhoJson();
+                       listaCompletacCaminhos();
+                        ExibirMatrizAdjacencia();
 //                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
 //                        String spinnerString = null;
 //                        spinnerString = sp.getSelectedItem().toString();
@@ -86,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                     {
                         lerArquivoCidadeJson();
                         listaCompletaCidades();
+                        lerArquivoCaminhoJson();
+                      listaCompletacCaminhos();
                     }
 
                     if(checkedDijkstra == false && checkedRecursao == false)
@@ -189,34 +197,124 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void listaCompletacCaminhos(){
+        if(listaCaminhos != null){
+            for(int i = 0; i< listaCaminhos.size(); i++){
+                System.out.println("Origem: "+listaCaminhos.get(i).getIdOrigem());
+                System.out.println("Destino: "+listaCaminhos.get(i).getIdDestino());
+                System.out.println("Distancia: "+listaCaminhos.get(i).getDistancia());
+                System.out.println("Tempo: "+listaCaminhos.get(i).getTempo());
+                System.out.println("Custo: "+listaCaminhos.get(i).getCusto());
+            }
+
+        }else{
+            System.out.println("Lista vazia, necessário cadastrar caminhos");
+        }
+    }
+
     public void lerArquivoCaminhoJson() throws IOException {
         try {
             AssetManager assetManager = getResources().getAssets();
-            InputStream inputStream = assetManager.open("Caminho.json");
+            InputStream inputStream = assetManager.open("caminhosCidades.json");
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String linha;
-            int numCidades = 23;
             LinkedList<String> linhas = new LinkedList<String>();
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
                 JSONObject objCaminho = new JSONObject(linha);
-                String idOrigem = objCaminho.getString("IdOrigem");
-                String idDestino = objCaminho.getString("IdDestino");
+                String idOrigem = objCaminho.getString("IdCidadeOrigem");
+                String idDestino = objCaminho.getString("IdCidadeDestino");
                 String distancia = objCaminho.getString("Distancia");
                 String tempo = objCaminho.getString("Tempo");
                 String custo = objCaminho.getString("Custo");
+
+
+                if(idOrigem.length() < 2)
+                {
+                    while(idOrigem.length() < 2)
+                    {
+                        idOrigem = " " + idOrigem;
+                    }
+                }
+
+                if(idDestino.length() < 2)
+                {
+                    while (idDestino.length() < 2)
+                    {
+                        idDestino = " " + idDestino ;
+                    }
+                }
+
+                if(distancia.length() < 4)
+                {
+                    while (distancia.length() < 4)
+                    {
+                        distancia = 0 + distancia ;
+                    }
+                }
+
+                if(tempo.length() < 2)
+                {
+                    while (tempo.length() < 2) {
+                        tempo = 0 + tempo;
+                    }
+                }
+
+                if(custo.length() < 3)
+                {
+                    while (custo.length() < 3) {
+                        custo = " " + custo;
+                    }
+                }
+
                 String linhaNova = idOrigem+idDestino+distancia+tempo+custo;
                 CaminhoCidade umCam = new CaminhoCidade(linhaNova);
-                matrizCaminho[numCidades][numCidades] = umCam;
+                Log.d("Linha", linha);
+                String idO = idOrigem.replace(" ", "");
+                String idD = idDestino.replace(" ", "");
+                listaCaminhos.add(umCam);
+                matrizCaminho[Integer.parseInt(idO)][Integer.parseInt(idD)] = umCam.getDistancia();
             }
+            grafo.setAdjacencia(matrizCaminho);
             inputStream.close();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
+    public void lerArquivoCaminhoTexto() throws IOException {
+        try {
+            AssetManager assetManager = getResources().getAssets();
+            InputStream inputStream = assetManager.open("CaminhosEntreCidadesMarte.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String linha;
+            LinkedList<String> linhas = new LinkedList<String>();
+            while ((linha = bufferedReader.readLine())!= null){
+                linhas.add(linha);
+                //CaminhoCidade umCam = new CaminhoCidade(linha);
+                //matrizCaminho[Integer.parseInt(idOrigem)][Integer.parseInt(idDestino)] = umCam.getDistancia();
+            }
+            grafo.setAdjacencia(matrizCaminho);
+            inputStream.close();
+        }
+        catch (IOException  e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void ExibirMatrizAdjacencia()
+    {
+        for(int i = 0; i < matrizCaminho.length; i++)
+        {
+            for(int j = 0; j< matrizCaminho.length; j++)
+            {
+                String resultado = String.valueOf(matrizCaminho[i][j]);
+                System.out.println(resultado);
+            }
+        }
+    }
 
     public void checkBox(View view) {
 
@@ -237,5 +335,13 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        matrizCaminho = new int[numCidades][numCidades];
+        grafo = new GrafoBactracking(numCidades, numCidades);
     }
 }
