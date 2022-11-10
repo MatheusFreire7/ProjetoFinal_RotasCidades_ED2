@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     GrafoBactracking grafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
+    List<String> listaNomeCidades = new ArrayList<String>();
     ActivityMainBinding binding;
     int numCidades = 23;
 
@@ -56,6 +57,32 @@ public class MainActivity extends AppCompatActivity {
         listaCaminho.add(new CaminhoCidade("1","3"));
         gvListaAdapter gvAdapter = new gvListaAdapter(this, listaCaminho);
         binding.gvLista.setAdapter(gvAdapter);
+
+        //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
+//            Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
+//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+//                    this,  R.array.cidades_array, android.R.layout.simple_spinner_item);
+//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            spinner.setAdapter(adapter);
+//            spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
+//
+//            Spinner spinner2 = (Spinner) findViewById(R.id.numDestino);
+//            ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
+//                    this, R.array.cidades_array, android.R.layout.simple_spinner_item);
+//            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            spinner2.setAdapter(adapter);
+//            spinner2.setOnItemSelectedListener(new MyOnItemSelectedListener());
+
+        //                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
+//                        String spinnerString = null;
+//                        spinnerString = sp.getSelectedItem().toString();
+//                        int nPos = sp.getSelectedItemPosition();
+//
+//
+//                        Toast.makeText(getApplicationContext(), "getSelectedItem=" + spinnerString,
+//                                Toast.LENGTH_LONG).show();
+//                        Toast.makeText(getApplicationContext(), "getSelectedItemPosition=" + nPos,
+//                                Toast.LENGTH_LONG).show();
 
         ImageView mapa;
         mapa = findViewById(R.id.mapa);
@@ -76,16 +103,6 @@ public class MainActivity extends AppCompatActivity {
                         lerArquivoCaminhoJson();
                        listaCompletacCaminhos();
                         ExibirMatrizAdjacencia();
-//                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
-//                        String spinnerString = null;
-//                        spinnerString = sp.getSelectedItem().toString();
-//                        int nPos = sp.getSelectedItemPosition();
-//
-//
-//                        Toast.makeText(getApplicationContext(), "getSelectedItem=" + spinnerString,
-//                                Toast.LENGTH_LONG).show();
-//                        Toast.makeText(getApplicationContext(), "getSelectedItemPosition=" + nPos,
-//                                Toast.LENGTH_LONG).show();
                     }
 
                     if(checkedDijkstra == true)
@@ -135,10 +152,18 @@ public class MainActivity extends AppCompatActivity {
                String linhaNova = idCidade+nomeCidade+cordenadaX+cordenadaY;
                 Cidade umCid = new Cidade(linhaNova);
                 listaCidade.add(umCid);
+                listaNomeCidades.add(umCid.getNomeCidade());
                 Log.d("Cidade", umCid.toString());
                 contCidades++;
             }
             inputStream.close();
+            ArrayAdapter<String> adapterString = new ArrayAdapter<>(this,  android.R.layout.simple_spinner_item, listaNomeCidades);
+            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            binding.numOrigem.setAdapter(adapterString);
+
+            ArrayAdapter<String> adapterString2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaNomeCidades);
+            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.numDestino.setAdapter(adapterString2);
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -158,10 +183,18 @@ public class MainActivity extends AppCompatActivity {
                 linhas.add(linha);
                 Cidade umCid = new Cidade(linha);
                 listaCidade.add(umCid);
+                listaNomeCidades.add(umCid.getNomeCidade());
                 Log.d("Cidade", umCid.toString());
                 contCidades++;
             }
             inputStream.close();
+            ArrayAdapter<String> adapterString = new ArrayAdapter<>(this,  android.R.layout.simple_spinner_item, listaNomeCidades);
+            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+            binding.numOrigem.setAdapter(adapterString);
+
+            ArrayAdapter<String> adapterString2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaNomeCidades);
+            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            binding.numDestino.setAdapter(adapterString2);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -176,21 +209,6 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("X: "+listaCidade.get(i).getCordenadaX());
                 System.out.println("Y: "+listaCidade.get(i).getCordenadaY());
             }
-
-            //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
-            Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                    this,  R.array.cidades_array, android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
-            spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
-            Spinner spinner2 = (Spinner) findViewById(R.id.numDestino);
-            ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
-                    this, R.array.cidades_array, android.R.layout.simple_spinner_item);
-            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner2.setAdapter(adapter);
-            spinner2.setOnItemSelectedListener(new MyOnItemSelectedListener());
 
         }else{
             System.out.println("Lista vazia, necessário cadastrar cidades");
