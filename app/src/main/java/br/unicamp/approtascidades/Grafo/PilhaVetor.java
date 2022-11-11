@@ -60,4 +60,16 @@ public class PilhaVetor<Dado> implements IStack<Dado> {
 
         return lista;
     }
+
+    public PilhaVetor<Dado> Clone() throws Exception{
+        PilhaVetor<Dado> ret = null;
+        try {
+            ret = new PilhaVetor<Dado>();
+            return ret;
+        } catch (Exception erro) {
+            throw new Exception("Erro no clone");
+        }
+    }
+
+
 }

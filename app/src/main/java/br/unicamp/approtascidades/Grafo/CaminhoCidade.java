@@ -8,7 +8,7 @@ public class CaminhoCidade
     private String idDestino;
     private int distancia;
     private int tempo;
-    private String custo;
+    private int custo;
 
     final int tamanhoIdOrigem = 2,
               tamanhoIdDestino = 2,
@@ -22,12 +22,25 @@ public class CaminhoCidade
               iniTempo = iniDistancia + tamanhoDistancia,
               iniCusto = iniTempo + tamanhoTempo;
 
-    public CaminhoCidade(String idOrigem, String idDestino, int distancia, int tempo, String custo) {
+    public CaminhoCidade(String idOrigem, String idDestino, int distancia, int tempo, int custo) {
         this.idOrigem = idOrigem;
         this.idDestino = idDestino;
         this.distancia = distancia;
         this.tempo = tempo;
         this.custo = custo;
+    }
+
+    public CaminhoCidade(String idOrigem, String idDestino, int distancia, int tempo) {
+        this.idOrigem = idOrigem;
+        this.idDestino = idDestino;
+        this.distancia = distancia;
+        this.tempo = tempo;
+    }
+
+    public CaminhoCidade(String idOrigem, String idDestino, int distancia) {
+        this.idOrigem = idOrigem;
+        this.idDestino = idDestino;
+        this.distancia = distancia;
     }
 
     public CaminhoCidade(String linha)
@@ -39,7 +52,7 @@ public class CaminhoCidade
             this.idDestino = linha.substring(iniIdDestino, iniIdDestino+tamanhoIdDestino).replace(" ", "");
             this.distancia = Integer.parseInt(linha.substring(iniDistancia, iniDistancia+tamanhoDistancia));
             this.tempo = Integer.parseInt(linha.substring(iniTempo, iniTempo+ tamanhoTempo));
-            this.custo = linha.substring(iniCusto, iniCusto+tamanhoCusto).replace(" ", "");
+            this.custo = Integer.parseInt(linha.substring(iniCusto, iniCusto+tamanhoCusto));
         }
     }
 
@@ -80,11 +93,11 @@ public class CaminhoCidade
         this.tempo = tempo;
     }
 
-    public String getCusto() {
+    public int getCusto() {
         return custo;
     }
 
-    public void setCusto(String custo) {
+    public void setCusto(int custo) {
         this.custo = custo;
     }
 }

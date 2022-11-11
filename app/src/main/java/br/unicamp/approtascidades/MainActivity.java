@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> listaNomeCidades = new ArrayList<String>();
     ActivityMainBinding binding;
     int numCidades = 23;
+    int menor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -282,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 if(custo.length() < 3)
                 {
                     while (custo.length() < 3) {
-                        custo = " " + custo;
+                        custo = 0 + custo;
                     }
                 }
 
@@ -328,10 +329,125 @@ public class MainActivity extends AppCompatActivity {
         {
             for(int j = 0; j< matrizCaminho.length; j++)
             {
-                String resultado = String.valueOf(matrizCaminho[i][j]);
-                System.out.println(resultado);
+                if(j != matrizCaminho.length-1)
+                    System.out.print(" " + matrizCaminho[i][j]);
+                else
+                    System.out.print(" " + matrizCaminho[i][j] + "\n");
             }
         }
+    }
+
+    private void AcharCaminhos(int origem, int destino) throws Exception
+    {
+        List<PilhaVetor<CaminhoCidade>> listaCaminhosPilha = new ArrayList<PilhaVetor<CaminhoCidade>>();
+
+        int menorDistancia = 0, disAtual = 0;
+        PilhaVetor<CaminhoCidade> caminhoAtual = new PilhaVetor<>();
+
+        PilhaVetor<CaminhoCidade> aux = new PilhaVetor<CaminhoCidade>();
+
+        boolean[] jaPassou = new boolean[23];
+        for (int i = 0; i < 23; i++)
+            jaPassou[i] = false;
+
+        int atual = origem;
+
+        boolean acabou = false;
+
+        while (!acabou) {
+            int tamanhoAnterior = aux.Tamanho();
+            for (int i = 0; i < 23; i++)
+                if (matrizCaminho[atual][i] != 0 && !jaPassou[i])
+                    aux.Empilhar(new CaminhoCidade(String.valueOf(atual),String.valueOf(i), matrizCaminho[atual][i]));
+                                        // Caminho criado possui idOrigem, IdDestino e Distancia
+
+            if (!aux.EstaVazia() && tamanhoAnterior == aux.Tamanho()) {
+                CaminhoCidade cam = caminhoAtual.Desempilhar();
+                disAtual -= cam.getDistancia();
+                jaPassou[cam.getDistancia()] = true;
+            }
+
+            if (aux.EstaVazia())
+                acabou = true;
+            else {
+                CaminhoCidade c = aux.Desempilhar();
+
+                while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino() != c.getIdOrigem()) {
+                    CaminhoCidade cam = caminhoAtual.Desempilhar();
+                    disAtual -= cam.getDistancia();
+                    jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
+                }
+
+                caminhoAtual.Empilhar(c);
+                disAtual += c.getDistancia();
+
+                if (Integer.parseInt(c.getIdDestino()) != destino) {
+                    jaPassou[Integer.parseInt(c.getIdOrigem())] = true;
+                    atual = Integer.parseInt(c.getIdDestino());
+                } else {
+                    listaCaminhosPilha.add(caminhoAtual.Clone());
+                    if (disAtual < menorDistancia) {
+                        menor = listaCaminhosPilha.size() - 1;
+                        menorDistancia = disAtual;
+                    }
+
+                    if (aux.EstaVazia())
+                        acabou = true;
+                    else {
+                        CaminhoCidade retorno = aux.Desempilhar();
+
+                        while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino() != retorno.getIdOrigem()) {
+                            CaminhoCidade cam = caminhoAtual.Desempilhar();
+                            disAtual -= cam.getDistancia();
+                            jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
+                        }
+
+                        caminhoAtual.Empilhar(retorno);
+                        jaPassou[Integer.parseInt(retorno.getIdDestino())] = true;
+                        disAtual += retorno.getDistancia();
+
+                        while (Integer.parseInt(retorno.getIdDestino()) == destino && !acabou) {
+                            listaCaminhosPilha.add(caminhoAtual.Clone());
+
+                            if (disAtual < menorDistancia) {
+                                menor = listaCaminhosPilha.size() - 1;
+                                menorDistancia = disAtual;
+                            }
+
+                            if (!aux.EstaVazia()) {
+                                retorno = aux.Desempilhar();
+                                while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino() != retorno.getIdOrigem()) {
+                                    CaminhoCidade cam = caminhoAtual.Desempilhar();
+                                    disAtual -= cam.getDistancia();
+                                    jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
+                                }
+
+                                caminhoAtual.Empilhar(retorno);
+                                disAtual += retorno.getDistancia();
+                            } else
+                                acabou = true;
+                        }
+
+                        atual = Integer.parseInt(retorno.getIdDestino());
+                    }
+                }
+            }
+        }
+    }
+
+    public void MostrarCaminhos()
+    {
+
+    }
+
+    public void MostrarCidades()
+    {
+
+    }
+
+    public void ExibirMenorCaminho()
+    {
+
     }
 
     public void checkBox(View view) {
