@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     int numCidades = 23;
     int menor;
+    DrawCidades dc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,36 +65,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         ArrayList<CaminhoCidade> caminhoAdapter = new ArrayList<CaminhoCidade>();
-        //caminhoAdapter.add(new CaminhoCidade("1","2")); // teste do gvListaAdapter
-        //caminhoAdapter.add(new CaminhoCidade("1","3"));
         gvListaAdapter gvAdapter = new gvListaAdapter(this, caminhoAdapter);
         binding.gvLista.setAdapter(gvAdapter);
-
-        //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
-//            Spinner spinner = (Spinner) findViewById(R.id.numOrigem);
-//            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-//                    this,  R.array.cidades_array, android.R.layout.simple_spinner_item);
-//            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            spinner.setAdapter(adapter);
-//            spinner.setOnItemSelectedListener(new MyOnItemSelectedListener());
-//
-//            Spinner spinner2 = (Spinner) findViewById(R.id.numDestino);
-//            ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
-//                    this, R.array.cidades_array, android.R.layout.simple_spinner_item);
-//            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//            spinner2.setAdapter(adapter);
-//            spinner2.setOnItemSelectedListener(new MyOnItemSelectedListener());
-
-        //                        Spinner sp =	(Spinner)findViewById(R.id.numOrigem);
-//                        String spinnerString = null;
-//                        spinnerString = sp.getSelectedItem().toString();
-//                        int nPos = sp.getSelectedItemPosition();
-//
-//
-//                        Toast.makeText(getApplicationContext(), "getSelectedItem=" + spinnerString,
-//                                Toast.LENGTH_LONG).show();
-//                        Toast.makeText(getApplicationContext(), "getSelectedItemPosition=" + nPos,
-//                                Toast.LENGTH_LONG).show();
 
         ImageView mapa;
         mapa = findViewById(R.id.mapa);
@@ -113,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
                         int idDestino = buscarId(String.valueOf(nomeCidadeDestino));
-//                        AcharCaminhosBacktracking(idOrigem,idDestino);
+//                      AcharCaminhosBacktracking(idOrigem,idDestino);
 //
 //                        if(caminhoAdapter.size() != 0)
 //                        {
@@ -178,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
             ArrayAdapter<String> adapterString2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaNomeCidades);
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.numDestino.setAdapter(adapterString2);
+
+            dc = new DrawCidades(this,listaCidade);
+            dc.invalidate();
+            //MostrarCidades();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -209,6 +186,10 @@ public class MainActivity extends AppCompatActivity {
             ArrayAdapter<String> adapterString2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaNomeCidades);
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.numDestino.setAdapter(adapterString2);
+
+            dc = new DrawCidades(this,listaCidade);
+            dc.invalidate();
+            //MostrarCidades();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -328,8 +309,6 @@ public class MainActivity extends AppCompatActivity {
             LinkedList<String> linhas = new LinkedList<String>();
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
-                //CaminhoCidade umCam = new CaminhoCidade(linha);
-                //matrizCaminho[Integer.parseInt(idOrigem)][Integer.parseInt(idDestino)] = umCam.getDistancia();
             }
             grafo.setAdjacencia(matrizCaminho);
             inputStream.close();
@@ -386,7 +365,6 @@ public class MainActivity extends AppCompatActivity {
                 acabou = true;
             else {
                 CaminhoCidade c = aux.Desempilhar();
-
 
                     Log.d("Topo","" +caminhoAtual.OTopo().getIdOrigem());
                     while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino()!= c.getIdOrigem()) {
