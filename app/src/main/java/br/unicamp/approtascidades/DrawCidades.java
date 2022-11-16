@@ -1,3 +1,6 @@
+//Luiz Henrique Parolim Domingues - 21248
+//Matheus Henrique de Oliveira Freire - 21251
+
 package br.unicamp.approtascidades;
 
 import android.annotation.SuppressLint;
@@ -51,7 +54,7 @@ public class DrawCidades extends View
     {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
-    
+
     @SuppressLint("ResourceType")
     @Override
     protected void onDraw(Canvas canvas) {

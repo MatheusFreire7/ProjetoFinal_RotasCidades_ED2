@@ -1,3 +1,6 @@
+//Luiz Henrique Parolim Domingues - 21248
+//Matheus Henrique de Oliveira Freire - 21251
+
 package br.unicamp.approtascidades;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -115,12 +118,12 @@ public class MainActivity extends AppCompatActivity {
     public void lerArquivoCidadeJson() throws IOException {
         try {
             AssetManager assetManager = getResources().getAssets();
-            InputStream inputStream = assetManager.open("cidadeCorreto.json");
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            InputStream inputStream = assetManager.open("cidadeCorreto.json"); //abrimos o arquivo na pasta assets
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream); // instanciamos um imputStreamReader
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader); // instanciamos um BufferedReader
             String linha;
             String idCidade = "";
-            int contCidades = 0;
+            int contCidades = 0; // contador de cidades
             LinkedList<String> linhas = new LinkedList<String>();
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
@@ -133,28 +136,31 @@ public class MainActivity extends AppCompatActivity {
                {
                    idCidade = objCidade.getString("IdCidade");
                }
-               String nomeCidade = objCidade.getString("NomeCidade");
+               String nomeCidade = objCidade.getString("NomeCidade");  //declaramos string para receber os campos do arquivo json
                String cordenadaX = objCidade.getString("CordenadaX");
                String cordenadaY = objCidade.getString("CordenadaY");
                String linhaNova = idCidade+nomeCidade+cordenadaX+cordenadaY;
                 Cidade umCid = new Cidade(linhaNova);
-                listaCidade.add(umCid);
-                listaNomeCidades.add(umCid.getNomeCidade());
+                listaCidade.add(umCid); //adicionamos a cidade na listaCidade
+                listaNomeCidades.add(umCid.getNomeCidade()); // adicionamos o nome da cidade na listaNomeCidades
                 Log.d("Cidade", umCid.toString());
-                contCidades++;
+                contCidades++; //incrementamos +1 ao contador
             }
             inputStream.close();
+
+            //Carregamos os nomes das cidades no sppiner de  cidade origem
             ArrayAdapter<String> adapterString = new ArrayAdapter<>(this,  android.R.layout.simple_spinner_item, listaNomeCidades);
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
             binding.numOrigem.setAdapter(adapterString);
 
+            //Carregamos os nomes das cidades no sppiner de  cidade Destino
             ArrayAdapter<String> adapterString2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaNomeCidades);
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.numDestino.setAdapter(adapterString2);
 
             dc = new DrawCidades(this,listaCidade);
             dc.invalidate();
-            //MostrarCidades();
+            MostrarCidades();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -189,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
             dc = new DrawCidades(this,listaCidade);
             dc.invalidate();
-            //MostrarCidades();
+            MostrarCidades();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -228,15 +234,15 @@ public class MainActivity extends AppCompatActivity {
     public void lerArquivoCaminhoJson() throws IOException {
         try {
             AssetManager assetManager = getResources().getAssets();
-            InputStream inputStream = assetManager.open("caminhosCidades.json");
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            InputStream inputStream = assetManager.open("caminhosCidades.json"); //abrimos o arquivo na pasta assets
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream); //instanciamos um inputStreamReader
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String linha;
             LinkedList<String> linhas = new LinkedList<String>();
-            while ((linha = bufferedReader.readLine())!= null){
+            while ((linha = bufferedReader.readLine())!= null){ // percorremos a linha enquanto ela é diferente de nula
                 linhas.add(linha);
                 JSONObject objCaminho = new JSONObject(linha);
-                String idOrigem = objCaminho.getString("IdCidadeOrigem");
+                String idOrigem = objCaminho.getString("IdCidadeOrigem"); //declaramos string para receber os campos do arquivo json
                 String idDestino = objCaminho.getString("IdCidadeDestino");
                 String distancia = objCaminho.getString("Distancia");
                 String tempo = objCaminho.getString("Tempo");
@@ -282,16 +288,18 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 String linhaNova = idOrigem+idDestino+distancia+tempo+custo;
-                CaminhoCidade umCam = new CaminhoCidade(linhaNova);
+                CaminhoCidade umCam = new CaminhoCidade(linhaNova); //Criamos um novo caminho a partir da linha lida
                 Log.d("Linha", linha);
-                String idO = idOrigem.replace(" ", "");
+                String idO = idOrigem.replace(" ", ""); //tiramos os espação em brancos dos id
                 String idD = idDestino.replace(" ", "");
-                listaCaminhos.add(umCam);
-                caminhoAtual.Empilhar(umCam);
+                listaCaminhos.add(umCam); //adicionamos o caminho a lista de caminhos
+                caminhoAtual.Empilhar(umCam); //empilhamos o caminho na pilha
                 matrizCaminho[Integer.parseInt(idO)][Integer.parseInt(idD)] = umCam.getDistancia();
+                // preenchemos a matriz com a distancia do caminho referente ao idOrigem e idDestino
+                // sendo idO o "idOrigem" representando a linha da matriz e idD o "idDestino" a coluna
             }
-            grafo.setAdjacencia(matrizCaminho);
-            inputStream.close();
+            grafo.setAdjacencia(matrizCaminho); //set o grafo com a matrizCaminho
+            inputStream.close(); //Fechamos o Arquivo
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();

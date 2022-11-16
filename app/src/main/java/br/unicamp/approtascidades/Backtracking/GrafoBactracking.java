@@ -1,3 +1,6 @@
+//Luiz Henrique Parolim Domingues - 21248
+//Matheus Henrique de Oliveira Freire - 21251
+
 package br.unicamp.approtascidades.Backtracking;
 
 public class GrafoBactracking
@@ -7,6 +10,7 @@ public class GrafoBactracking
     public int[][] getAdjacencia() {
         return adjacencia;
     }
+
 
     public void setAdjacencia(int[][] adjacencia) {
         this.adjacencia = adjacencia;
