@@ -4,6 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -41,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     GrafoBactracking grafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
+    List<PilhaVetor<CaminhoCidade>> pilhaCaminhos;
+    PilhaVetor<CaminhoCidade> caminhoAtual = new PilhaVetor<>();
     List<String> listaNomeCidades = new ArrayList<String>();
     ActivityMainBinding binding;
     int numCidades = 23;
@@ -53,10 +63,10 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ArrayList<CaminhoCidade> listaCaminho = new ArrayList<CaminhoCidade>();
-        listaCaminho.add(new CaminhoCidade("1","2")); // teste do gvListaAdapter
-        listaCaminho.add(new CaminhoCidade("1","3"));
-        gvListaAdapter gvAdapter = new gvListaAdapter(this, listaCaminho);
+        ArrayList<CaminhoCidade> caminhoAdapter = new ArrayList<CaminhoCidade>();
+        //caminhoAdapter.add(new CaminhoCidade("1","2")); // teste do gvListaAdapter
+        //caminhoAdapter.add(new CaminhoCidade("1","3"));
+        gvListaAdapter gvAdapter = new gvListaAdapter(this, caminhoAdapter);
         binding.gvLista.setAdapter(gvAdapter);
 
         //Carrega o nome das cidades que estão armazenadas em um vetor em um spinner
@@ -99,26 +109,29 @@ public class MainActivity extends AppCompatActivity {
 
                     if(checkedRecursao == true)
                     {
-                        lerArquivoCidadeJson();
-                        listaCompletaCidades();
-                        lerArquivoCaminhoJson();
-                       listaCompletacCaminhos();
-                        ExibirMatrizAdjacencia();
+                        Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
+                        int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
+                        Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
+                        int idDestino = buscarId(String.valueOf(nomeCidadeDestino));
+//                        AcharCaminhosBacktracking(idOrigem,idDestino);
+//
+//                        if(caminhoAdapter.size() != 0)
+//                        {
+//                            MostrarCaminhos();
+//                        }
+
                     }
 
                     if(checkedDijkstra == true)
                     {
-                        lerArquivoCidadeJson();
-                        listaCompletaCidades();
-                        lerArquivoCaminhoJson();
-                      listaCompletacCaminhos();
+
                     }
 
                     if(checkedDijkstra == false && checkedRecursao == false)
                         Toast.makeText(MainActivity.this, "Clique em um dos checkedBox para poder Buscar", Toast.LENGTH_LONG).show();
 
 
-                } catch (IOException | NullPointerException e) {
+                } catch (Exception e) {
                     Toast.makeText(MainActivity.this, "Erro na Leitura do Arquivo", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
@@ -293,12 +306,15 @@ public class MainActivity extends AppCompatActivity {
                 String idO = idOrigem.replace(" ", "");
                 String idD = idDestino.replace(" ", "");
                 listaCaminhos.add(umCam);
+                caminhoAtual.Empilhar(umCam);
                 matrizCaminho[Integer.parseInt(idO)][Integer.parseInt(idD)] = umCam.getDistancia();
             }
             grafo.setAdjacencia(matrizCaminho);
             inputStream.close();
         }
         catch (IOException | JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -337,12 +353,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void AcharCaminhos(int origem, int destino) throws Exception
+    private void AcharCaminhosBacktracking(int origem, int destino) throws Exception
     {
         List<PilhaVetor<CaminhoCidade>> listaCaminhosPilha = new ArrayList<PilhaVetor<CaminhoCidade>>();
 
-        int menorDistancia = 0, disAtual = 0;
-        PilhaVetor<CaminhoCidade> caminhoAtual = new PilhaVetor<>();
+        int menorDistancia = Integer.MAX_VALUE, disAtual = 0;
 
         PilhaVetor<CaminhoCidade> aux = new PilhaVetor<CaminhoCidade>();
 
@@ -364,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
             if (!aux.EstaVazia() && tamanhoAnterior == aux.Tamanho()) {
                 CaminhoCidade cam = caminhoAtual.Desempilhar();
                 disAtual -= cam.getDistancia();
-                jaPassou[cam.getDistancia()] = true;
+                jaPassou[Integer.parseInt(cam.getIdDestino())] = true;
             }
 
             if (aux.EstaVazia())
@@ -372,11 +387,13 @@ public class MainActivity extends AppCompatActivity {
             else {
                 CaminhoCidade c = aux.Desempilhar();
 
-                while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino() != c.getIdOrigem()) {
-                    CaminhoCidade cam = caminhoAtual.Desempilhar();
-                    disAtual -= cam.getDistancia();
-                    jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
-                }
+
+                    Log.d("Topo","" +caminhoAtual.OTopo().getIdOrigem());
+                    while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino()!= c.getIdOrigem()) {
+                        CaminhoCidade cam = caminhoAtual.Desempilhar();
+                        disAtual -= cam.getDistancia();
+                        jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
+                    }
 
                 caminhoAtual.Empilhar(c);
                 disAtual += c.getDistancia();
@@ -435,17 +452,62 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void MostrarCaminhos()
+    public int buscarId(String nomeCidade)
     {
+        int idCidade = 0;
+        for(int i = 0; i < listaCidade.size(); i++)
+        {
+            if(listaCidade.get(i).getNomeCidade() == nomeCidade)
+            {
+                idCidade = listaCidade.get(i).getIdCidade();
+            }
+        }
+        return idCidade;
+    }
+    public void MostrarCaminhos() throws Exception
+    {
+        for (PilhaVetor<CaminhoCidade> caminho : pilhaCaminhos)
+        {
+            int posição = 0;
+            PilhaVetor<CaminhoCidade> aux = caminho.Clone();
+            aux.Inverter();
+
+            while (!aux.EstaVazia())
+            {
+                CaminhoCidade c = aux.Desempilhar();
+                listaCaminhos.add(c);
+            }
+        }
 
     }
 
     public void MostrarCidades()
     {
+        Bitmap mapaBit = BitmapFactory.decodeResource(getResources(), R.drawable.mapa);
+        Paint paint =  new Paint();
+        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        paint.setColor(Color.BLACK);
 
+        int contCidades = 0;
+      canvas.drawBitmap(bitmap,0,0,null);
+        while(listaCidade.size() > contCidades)
+        {
+            double coordenadaX = listaCidade.get(contCidades).getCordenadaX() * binding.mapa.getWidth();
+            double coordenadaY =listaCidade.get(contCidades).getCordenadaY() * binding.mapa.getHeight();
+            canvas.drawCircle((float) coordenadaX,(float)coordenadaY,10f,paint);
+            binding.mapa.setImageDrawable(new BitmapDrawable(getResources(),bitmap));
+            contCidades++;
+        }
+        binding.mapa.setImageBitmap(bitmap);
     }
 
     public void ExibirMenorCaminho()
+    {
+
+    }
+
+    public void BuscarDijkstra()
     {
 
     }
@@ -475,7 +537,29 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        listaCaminhos = new ArrayList<CaminhoCidade>();
         matrizCaminho = new int[numCidades][numCidades];
         grafo = new GrafoBactracking(numCidades, numCidades);
+        pilhaCaminhos = new ArrayList<>();
+
+        try
+        {
+            lerArquivoCidadeJson();
+            listaCompletaCidades();
+            MostrarCidades();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            lerArquivoCaminhoJson();
+            listaCompletacCaminhos();
+            ExibirMatrizAdjacencia();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

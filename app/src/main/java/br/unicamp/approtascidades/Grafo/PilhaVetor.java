@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class PilhaVetor<Dado> implements IStack<Dado> {
     Dado[] p;
     int topo;
+    int tamanho;
     public PilhaVetor(int maximo)
     {
         p =  (Dado[]) new Object[maximo];
@@ -12,9 +13,19 @@ public class PilhaVetor<Dado> implements IStack<Dado> {
     }
 
     public PilhaVetor()
-    { }
+    {
+        p = (Dado[]) new Object[1000];
+    }
 
     public int Tamanho(){ return topo + 1;}
+
+    public int getTamanho() {
+        return tamanho = topo +1;
+    }
+
+    public void setTamanho(int tamanho) {
+        this.tamanho = tamanho;
+    }
 
     public boolean EstaVazia(){
         if(topo < 0)
@@ -61,7 +72,8 @@ public class PilhaVetor<Dado> implements IStack<Dado> {
         return lista;
     }
 
-    public PilhaVetor<Dado> Clone() throws Exception{
+    public PilhaVetor<Dado> Clone() throws Exception
+    {
         PilhaVetor<Dado> ret = null;
         try {
             ret = new PilhaVetor<Dado>();
@@ -69,6 +81,16 @@ public class PilhaVetor<Dado> implements IStack<Dado> {
         } catch (Exception erro) {
             throw new Exception("Erro no clone");
         }
+    }
+
+    public void Inverter() throws Exception
+    {
+        PilhaVetor<Dado> aux = new PilhaVetor<>();
+        while (!EstaVazia())
+            aux.Empilhar(Desempilhar());
+
+        this.topo = aux.topo;
+        this.tamanho= aux.tamanho;
     }
 
 

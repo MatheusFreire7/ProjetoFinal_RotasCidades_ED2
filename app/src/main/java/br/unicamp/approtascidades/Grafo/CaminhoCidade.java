@@ -56,6 +56,10 @@ public class CaminhoCidade
         }
     }
 
+    public CaminhoCidade()
+    {}
+
+
     public CaminhoCidade(String idOrigem, String idDestino) {
         this.idOrigem = idOrigem;
         this.idDestino = idDestino;
@@ -100,4 +104,16 @@ public class CaminhoCidade
     public void setCusto(int custo) {
         this.custo = custo;
     }
+
+    public CaminhoCidade Clone() throws Exception
+    {
+        CaminhoCidade ret = null;
+        try {
+            ret = new CaminhoCidade();
+            return ret;
+        } catch (Exception erro) {
+            throw new Exception("Erro no clone");
+        }
+    }
+
 }
