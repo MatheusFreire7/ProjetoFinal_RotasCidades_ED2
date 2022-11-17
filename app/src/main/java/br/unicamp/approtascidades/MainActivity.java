@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     int numCidades = 23;
     int menor;
-    DrawCidades dc;
     Cidade Origem;
     Cidade Destino;
 
@@ -164,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.numDestino.setAdapter(adapterString2);
 
-//            dc = new DrawCidades(this,listaCidade);
-//            dc.invalidate();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -198,9 +195,6 @@ public class MainActivity extends AppCompatActivity {
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.numDestino.setAdapter(adapterString2);
 
-            dc = new DrawCidades(this,listaCidade);
-            dc.invalidate();
-            MostrarCidades();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -474,11 +468,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void MostrarCidades()
     {
-            Paint paint =  new Paint();
-            paint.setColor(Color.BLACK);
+            Paint paint =  new Paint(); // instanciamos a classe Paint
+            paint.setColor(Color.BLACK); //setamos os atributos cor e tamanho de texto
             paint.setTextSize(20);
             binding.mapa.buildDrawingCache();
-            int altura = binding.mapa.getDrawingCache().getHeight();
+            int altura = binding.mapa.getDrawingCache().getHeight();  //pegamos a altura e largura do mapa
             int largura = binding.mapa.getDrawingCache().getWidth();
             Log.d("altura", altura + "");
             Log.d("largura", largura + "");

@@ -4,10 +4,16 @@
 package br.unicamp.approtascidades.Grafo;
 
 import android.os.Message;
+import android.view.View;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public class Grafo {
     private final int NUM_VERTICES = 20;
@@ -16,6 +22,13 @@ public class Grafo {
     private int numVerts;
     private  GridView gridView;
     private int linha, coluna = 0;
+
+    /// DIJKSTRA
+    DistOriginal[] percurso;
+    int infinity = Integer.MAX_VALUE;
+    int verticeAtual; // global que indica o vértice atualmente sendo visitado
+    int doInicioAteAtual; // global usada para ajustar menor caminho com Djikstra
+    int nTree;
 
     public int getNUM_VERTICES() {
         return NUM_VERTICES;
@@ -60,9 +73,13 @@ public class Grafo {
         vertices = new Vertice[NUM_VERTICES];
         adjMatrix = new int[NUM_VERTICES][NUM_VERTICES];
         numVerts = 0;
+        nTree = 0;
+
         for (int j = 0; j < NUM_VERTICES; j++) // zera toda a matriz
             for (int k = 0; k < NUM_VERTICES; k++)
-                adjMatrix[j][k] = 0;
+                adjMatrix[j][k] = infinity;
+
+        percurso = new DistOriginal[NUM_VERTICES];
     }
 
     public Grafo(int tamanhoLinhas, int tamanhoColunas)
@@ -187,6 +204,149 @@ public class Grafo {
         String resultado = "Sequência da Ordenação Topológica: ";
         while (!gPilha.EstaVazia())
             resultado += gPilha.Desempilhar() + " "; // desempilha para exibir
+        return resultado;
+    }
+
+
+    void ProcessarNo(int i)
+    {
+        System.out.print(vertices[i].rotulo);
+    }
+    public void PercursoEmProfundidadeRec(int[][]adjMatrix, int numVerts, int part)
+    {
+        int i;
+        ProcessarNo(part);
+        vertices[part].foiVisitado = true;
+        for (i = 0; i < numVerts; ++i)
+            if (adjMatrix[part][i] == 1 && !vertices[i].foiVisitado)
+        PercursoEmProfundidadeRec(adjMatrix, numVerts, i);
+    }
+
+    public String Caminho(int inicioDoPercurso, int finalDoPercurso, List lista) throws Exception
+    {
+        lista = new ArrayList();
+        for (int j = 0; j < numVerts; j++)
+            vertices[j].foiVisitado = false;
+        vertices[inicioDoPercurso].foiVisitado = true;
+        for (int j = 0; j < numVerts; j++)
+        {
+            // anotamos no vetor percurso a distância entre o inicioDoPercurso e cada vértice
+            // se não há ligação direta, o valor da distância será infinity
+            int tempDist = adjMatrix[inicioDoPercurso][j];
+            percurso[j] = new DistOriginal(inicioDoPercurso, tempDist);
+        }
+        for (int nTree = 0; nTree < numVerts; nTree++)
+        {
+            // Procuramos a saída não visitada do vértice inicioDoPercurso com a menor distância
+            int indiceDoMenor = ObterMenor();
+            // e anotamos essa menor distância
+            int distanciaMinima = percurso[indiceDoMenor].distancia;
+            // o vértice com a menor distância passa a ser o vértice atual
+            // para compararmos com a distância calculada em AjustarMenorCaminho()
+            verticeAtual = indiceDoMenor;
+            doInicioAteAtual = percurso[indiceDoMenor].distancia;
+            // visitamos o vértice com a menor distância desde o inicioDoPercurso
+            vertices[verticeAtual].foiVisitado = true;
+            AjustarMenorCaminho(lista);
+        }
+        return ExibirPercursos(inicioDoPercurso, finalDoPercurso, lista);
+    }
+
+    public int ObterMenor()
+    {
+        int distanciaMinima = infinity;
+        int indiceDaMinima = 0;
+        for (int j = 0; j < numVerts; j++)
+            if (!(vertices[j].foiVisitado) && (percurso[j].distancia <distanciaMinima))
+            {
+                distanciaMinima = percurso[j].distancia;
+                indiceDaMinima = j;
+            }
+        return indiceDaMinima;
+    }
+    public void AjustarMenorCaminho(List lista)
+    {
+        lista = new ArrayList();
+        for (int coluna = 0; coluna < numVerts; coluna++)
+            if (!vertices[coluna].foiVisitado) // para cada vértice ainda não visitado
+            {
+                // acessamos a distância desde o vértice atual (pode ser infinity)
+                int atualAteMargem = adjMatrix[verticeAtual][coluna];
+                // calculamos a distância desde inicioDoPercurso passando por vertice atual
+                // até esta saída
+                int doInicioAteMargem = doInicioAteAtual + atualAteMargem;
+                // quando encontra uma distância menor, marca o vértice a partir do
+                // qual chegamos no vértice de índice coluna, e a soma da distância
+                // percorrida para nele chegar
+                int distanciaDoCaminho = percurso[coluna].distancia;
+                if (doInicioAteMargem < distanciaDoCaminho)
+                {
+                    percurso[coluna].verticePai = verticeAtual;
+                    percurso[coluna].distancia = doInicioAteMargem;
+                    ExibirTabela(lista);
+                }
+            }
+        lista.add( "==================Caminho ajustado==============");
+        lista.add(" ");
+    }
+
+    public void ExibirTabela(List lista)
+    {
+        lista = new ArrayList();
+        String dist = "";
+        lista.add("Vértice\tVisitado?\tPeso\tVindo de");
+        for (int i = 0; i < numVerts; i++)
+        {
+            if (percurso[i].distancia == infinity)
+                dist = "inf";
+            else
+                dist = percurso[i].distancia + "";
+            lista.add(vertices[i].rotulo + "\t" + vertices[i].foiVisitado +
+                    "\t\t" + dist + "\t" + vertices[percurso[i].verticePai].rotulo);
+        }
+        lista.add("-----------------------------------------------------");
+    }
+
+    public String ExibirPercursos(int inicioDoPercurso, int finalDoPercurso,
+                                  List lista) throws Exception {
+        lista = new ArrayList();
+        String resultado = "";
+        for (int j = 0; j < numVerts; j++)
+        {
+            resultado += vertices[j].rotulo + "=";
+            if (percurso[j].distancia == infinity)
+                resultado += "inf";
+            else
+                resultado += percurso[j].distancia+" ";
+            String pai = vertices[percurso[j].verticePai].rotulo;
+            resultado += "(" + pai + ") ";
+        }
+        lista.add(resultado);
+        lista.add(" ");
+        lista.add(" ");
+        lista.add("Caminho entre " + vertices[inicioDoPercurso].rotulo +
+                " e " + vertices[finalDoPercurso].rotulo);
+        lista.add(" ");
+        int onde = finalDoPercurso;
+        PilhaVetor<String> pilha = new PilhaVetor<String>();
+        int cont = 0;
+        while (onde != inicioDoPercurso)
+        {
+            onde = percurso[onde].verticePai;
+            pilha.Empilhar(vertices[onde].rotulo);
+            cont++;
+        }
+        resultado = "";
+        while (pilha.getTamanho() != 0)
+        {
+            resultado += pilha.Desempilhar();
+            if (pilha.getTamanho() != 0)
+                resultado += " --> ";
+        }
+        if ((cont == 1) && (percurso[finalDoPercurso].distancia == infinity))
+            resultado = "Não há caminho";
+        else
+            resultado += " --> " + vertices[finalDoPercurso].rotulo;
         return resultado;
     }
 

@@ -7,6 +7,7 @@ public class Vertice {
 
     public boolean foiVisitado;
     public String rotulo;
+    private boolean estaAtivo;
     double x, y;// coordenadas cartesianas do vértice
 
     public Vertice(String label, double x, double y)
@@ -21,6 +22,7 @@ public class Vertice {
     {
         rotulo = label;
         foiVisitado = false;
+        estaAtivo = true;
         this.x = 0;
         this.y = 0;
     }
