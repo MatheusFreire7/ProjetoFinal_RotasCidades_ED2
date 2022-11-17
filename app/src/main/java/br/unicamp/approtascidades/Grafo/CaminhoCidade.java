@@ -50,7 +50,7 @@ public class CaminhoCidade
     {
         if(linha != null)
         {
-            Log.d("linha", linha);
+//            Log.d("linha", linha);
             this.idOrigem = linha.substring(0, tamanhoIdOrigem).replace(" ","");
             this.idDestino = linha.substring(iniIdDestino, iniIdDestino+tamanhoIdDestino).replace(" ", "");
             this.distancia = Integer.parseInt(linha.substring(iniDistancia, iniDistancia+tamanhoDistancia));

@@ -12,8 +12,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     int numCidades = 23;
     int menor;
     DrawCidades dc;
+    Cidade Origem;
+    Cidade Destino;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if(checkedRecursao == true)
                     {
+                        MostrarCidades();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
@@ -158,9 +164,8 @@ public class MainActivity extends AppCompatActivity {
             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             binding.numDestino.setAdapter(adapterString2);
 
-            dc = new DrawCidades(this,listaCidade);
-            dc.invalidate();
-            MostrarCidades();
+//            dc = new DrawCidades(this,listaCidade);
+//            dc.invalidate();
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -469,23 +474,89 @@ public class MainActivity extends AppCompatActivity {
 
     public void MostrarCidades()
     {
-        Bitmap mapaBit = BitmapFactory.decodeResource(getResources(), R.drawable.mapa);
-        Paint paint =  new Paint();
-        Bitmap bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        paint.setColor(Color.BLACK);
+            Paint paint =  new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setTextSize(20);
+            binding.mapa.buildDrawingCache();
+            int altura = binding.mapa.getDrawingCache().getHeight();
+            int largura = binding.mapa.getDrawingCache().getWidth();
+            Log.d("altura", altura + "");
+            Log.d("largura", largura + "");
+            Bitmap bitmap = Bitmap.createBitmap(largura,altura, Bitmap.Config.ARGB_8888);
+            bitmap = bitmap.copy(bitmap.getConfig(),true);
+            Canvas canvas = new Canvas(bitmap);
+            int contCidades = 0;
+            Log.d("TamanhoLista", listaCidade.size() + " ");
+            canvas.drawBitmap(binding.mapa.getDrawingCache(),0,0,null);
+            while(listaCidade.size() > contCidades)
+            {
+                double coordenadaX = listaCidade.get(contCidades).getCordenadaX() *largura;
+                double coordenadaY =listaCidade.get(contCidades).getCordenadaY() * altura;
+                String nomeCidade = listaCidade.get(contCidades).getNomeCidade();
+                canvas.drawText(nomeCidade,(float) coordenadaX+8,(float)coordenadaY, paint);
+                canvas.drawCircle((float) coordenadaX,(float)coordenadaY,7f,paint);
+                binding.mapa.setImageBitmap(bitmap);
+                contCidades++;
+            }
+            binding.mapa.setImageBitmap(bitmap);
 
+
+    }
+
+    public void ExibirTodosCaminhos()
+    {
+        Paint paint =  new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(20);
+        binding.mapa.buildDrawingCache();
+        int altura = binding.mapa.getDrawingCache().getHeight();
+        int largura = binding.mapa.getDrawingCache().getWidth();
+        Log.d("altura", altura + "");
+        Log.d("largura", largura + "");
+        Bitmap bitmap = Bitmap.createBitmap(largura,altura, Bitmap.Config.ARGB_8888);
+        bitmap = bitmap.copy(bitmap.getConfig(),true);
+        Canvas canvas = new Canvas(bitmap);
         int contCidades = 0;
-      canvas.drawBitmap(bitmap,0,0,null);
+        Log.d("TamanhoListaCaminhos", listaCaminhos.size() + " ");
+        canvas.drawBitmap(binding.mapa.getDrawingCache(),0,0,null);
         while(listaCidade.size() > contCidades)
         {
-            double coordenadaX = listaCidade.get(contCidades).getCordenadaX() * binding.mapa.getWidth();
-            double coordenadaY =listaCidade.get(contCidades).getCordenadaY() * binding.mapa.getHeight();
-            canvas.drawCircle((float) coordenadaX,(float)coordenadaY,10f,paint);
-            binding.mapa.setImageDrawable(new BitmapDrawable(getResources(),bitmap));
+            double coordenadaX = listaCidade.get(contCidades).getCordenadaX() *largura;
+            double coordenadaY =listaCidade.get(contCidades).getCordenadaY() * altura;
+            String nomeCidade = listaCidade.get(contCidades).getNomeCidade();
+            canvas.drawText(nomeCidade,(float) coordenadaX+8,(float)coordenadaY, paint);
+            canvas.drawCircle((float) coordenadaX,(float)coordenadaY,7f,paint);
+            binding.mapa.setImageBitmap(bitmap);
             contCidades++;
         }
         binding.mapa.setImageBitmap(bitmap);
+
+        int contCaminhos = 0;
+        while(listaCaminhos.size() > contCaminhos)
+        {
+            contCidades = 0;
+            int idOrigem = Integer.parseInt(listaCaminhos.get(contCaminhos).getIdOrigem());
+            int idDestino =Integer.parseInt(listaCaminhos.get(contCaminhos).getIdDestino());
+            while(listaCidade.size() > contCidades)
+            {
+                int id  = listaCidade.get(contCidades).getIdCidade();
+                if(idOrigem == id)
+                {
+                    Log.d("entrouOrigem","entrou");
+                    Origem = listaCidade.get(contCidades);
+                }
+                if(idDestino == id)
+                {
+                    Log.d("entrouDestino","entrou");
+                    Destino = listaCidade.get(contCidades);
+                }
+                contCidades++;
+            }
+            contCaminhos++;
+            canvas.drawLine((float)Origem.getCordenadaX() * largura,(float) Origem.getCordenadaY() * altura,(float) Destino.getCordenadaX() * largura,(float) Destino.getCordenadaY() * altura,paint);
+        }
+        binding.mapa.setImageBitmap(bitmap);
+
     }
 
     public void ExibirMenorCaminho()
@@ -532,7 +603,6 @@ public class MainActivity extends AppCompatActivity {
         {
             lerArquivoCidadeJson();
             listaCompletaCidades();
-            MostrarCidades();
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -541,8 +611,8 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             lerArquivoCaminhoJson();
-            listaCompletacCaminhos();
-            ExibirMatrizAdjacencia();
+            //listaCompletacCaminhos();
+            //ExibirMatrizAdjacencia();
         } catch (IOException e) {
             e.printStackTrace();
         }

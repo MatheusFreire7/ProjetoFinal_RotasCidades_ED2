@@ -85,9 +85,9 @@ public class Cidade
     {
         if(linha != null)
         {
-            Log.d("Linha", linha);
-            Log.d("Id", linha.substring(0,tamCodigo));
-            Log.d("x", linha.substring(16,23));
+//            Log.d("Linha", linha);
+//            Log.d("Id", linha.substring(0,tamCodigo));
+//            Log.d("x", linha.substring(16,23));
             this.idCidade = Integer.parseInt(linha.substring(0, tamCodigo).replace(" ",""));
             this.nomeCidade = linha.substring(iniNome, tamNome);
             this.cordenadaX = Double.parseDouble(linha.substring(iniX, tamX).replace(",", "."));
