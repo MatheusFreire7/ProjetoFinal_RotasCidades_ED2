@@ -4,6 +4,7 @@
 package br.unicamp.approtascidades;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
+import br.unicamp.approtascidades.Grafo.Cidade;
 
 public class gvListaAdapter extends ArrayAdapter<CaminhoCidade> {
-    public gvListaAdapter(@NonNull Context context, ArrayList<CaminhoCidade> listCaminhoCidade) {
+    List<Cidade> listCidade = null;
+
+    public gvListaAdapter(@NonNull Context context, List<CaminhoCidade> listCaminhoCidade, List<Cidade> ListCidade) {
         super(context,0 ,listCaminhoCidade);
+        this.listCidade = ListCidade;
+
     }
 
     @NonNull
@@ -32,7 +38,24 @@ public class gvListaAdapter extends ArrayAdapter<CaminhoCidade> {
         }
         CaminhoCidade caminhoCidade = getItem(position);
         TextView txtCaminho = listitemView.findViewById(R.id.tvCaminho);
-        txtCaminho.setText(caminhoCidade.getIdDestino());
+        if(buscarNome(caminhoCidade.getIdDestino()) != " ")
+        {
+            txtCaminho.setText(buscarNome(caminhoCidade.getIdDestino()));
+        }
         return listitemView;
     }
+
+    public String buscarNome(String idDestino)
+    {
+        String nomeCidade = " ";
+        for(int i = 0; i < listCidade.size(); i++)
+        {
+            if(listCidade.get(i).getIdCidade() == Integer.parseInt(idDestino))
+            {
+                nomeCidade = listCidade.get(i).getNomeCidade();
+            }
+        }
+        return nomeCidade;
+    }
+
 }

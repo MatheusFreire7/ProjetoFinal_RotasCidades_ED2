@@ -78,10 +78,11 @@
 
         <ImageView
             android:id="@+id/mapa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="1503dp"
+            android:layout_height="794dp"
             android:layout_below="@id/numOrigem"
-            android:layout_toRightOf="@id/numOrigem" />
+            android:layout_toRightOf="@id/numOrigem"
+            android:src="@drawable/mapa"/>
 
     </RelativeLayout>
 

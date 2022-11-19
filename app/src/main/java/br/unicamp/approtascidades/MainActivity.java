@@ -16,6 +16,7 @@ import android.graphics.Picture;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.wifi.aware.AwareResources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     int menor;
     Cidade Origem;
     Cidade Destino;
+    boolean mostrouCidade = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +73,40 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        ArrayList<CaminhoCidade> caminhoAdapter = new ArrayList<CaminhoCidade>();
-        gvListaAdapter gvAdapter = new gvListaAdapter(this, caminhoAdapter);
-        binding.gvLista.setAdapter(gvAdapter);
+//        ArrayList<CaminhoCidade> caminhoAdapter = new ArrayList<CaminhoCidade>();
+//        gvListaAdapter gvAdapter = new gvListaAdapter(this, caminhoAdapter);
+//        binding.gvLista.setAdapter(gvAdapter);
 
-        ImageView mapa;
-        mapa = findViewById(R.id.mapa);
-        Picasso.get().load(R.drawable.mapa).into(mapa); //Carregamos a imagem do Mapa de marte com a biblioteca Picasso
+//        ImageView mapa;
+//        mapa = findViewById(R.id.mapa);
+//        Picasso.get().load(R.drawable.mapa).into(mapa); //Carregamos a imagem do Mapa de marte com a biblioteca Picasso
+
+        binding.chkRecursao.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                if(!mostrouCidade)
+                {
+                    MostrarCidades();
+                    mostrouCidade = true;
+                }
+
+            }
+        });
+
+        binding.chkDijkstra.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                if(!mostrouCidade)
+                {
+                    MostrarCidades();
+                    mostrouCidade = true;
+                }
+
+            }
+        });
+
 
 
         binding.btnBuscar.setOnClickListener(new View.OnClickListener() {
@@ -86,10 +115,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     boolean checkedRecursao = ((CheckBox) binding.chkRecursao).isChecked(); // vericamos se os checkedBox estão clicados
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
-
+                    MostrarCidades();
                     if(checkedRecursao == true)
                     {
-                        MostrarCidades();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
@@ -192,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
             binding.numOrigem.setAdapter(adapterString);
 
             ArrayAdapter<String> adapterString2 = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaNomeCidades);
-            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
             binding.numDestino.setAdapter(adapterString2);
 
         }
@@ -288,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String linhaNova = idOrigem+idDestino+distancia+tempo+custo;
                 CaminhoCidade umCam = new CaminhoCidade(linhaNova); //Criamos um novo caminho a partir da linha lida
-                Log.d("Linha", linha);
+                //Log.d("Linha", linha);
                 String idO = idOrigem.replace(" ", ""); //tiramos os espação em brancos dos id
                 String idD = idDestino.replace(" ", "");
                 listaCaminhos.add(umCam); //adicionamos o caminho a lista de caminhos
@@ -297,6 +325,8 @@ public class MainActivity extends AppCompatActivity {
                 // preenchemos a matriz com a distancia do caminho referente ao idOrigem e idDestino
                 // sendo idO o "idOrigem" representando a linha da matriz e idD o "idDestino" a coluna
             }
+            gvListaAdapter gvAdapter = new gvListaAdapter(this, listaCaminhos,listaCidade);
+            binding.gvLista.setAdapter(gvAdapter);
             grafo.setAdjacencia(matrizCaminho); //set o grafo com a matrizCaminho
             inputStream.close(); //Fechamos o Arquivo
         }
@@ -588,6 +618,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+
         listaCaminhos = new ArrayList<CaminhoCidade>();
         matrizCaminho = new int[numCidades][numCidades];
         grafo = new GrafoBactracking(numCidades, numCidades);
@@ -597,6 +628,7 @@ public class MainActivity extends AppCompatActivity {
         {
             lerArquivoCidadeJson();
             listaCompletaCidades();
+
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -605,11 +637,12 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             lerArquivoCaminhoJson();
-            //listaCompletacCaminhos();
+            listaCompletacCaminhos();
             //ExibirMatrizAdjacencia();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
+
+
 }
