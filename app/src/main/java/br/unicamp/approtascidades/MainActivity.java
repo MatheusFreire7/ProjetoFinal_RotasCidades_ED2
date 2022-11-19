@@ -600,6 +600,28 @@ public class MainActivity extends AppCompatActivity {
         return id;
     }
 
+    public String encontrarNomeAdapter(int position)
+    {
+        String id = " ";
+
+        for(int i = 0; i<= position; i++)
+        {
+            if(i == position)
+                id = listaCaminhos.get(i).getIdDestino();
+        }
+
+        String nome = " ";
+
+        for(int i = 0; i< listaCidade.size(); i++)
+        {
+            if(listaCidade.get(i).getIdCidade() == Integer.parseInt(id))
+                nome = listaCidade.get(i).getNomeCidade();
+        }
+
+        return nome;
+    }
+
+
 
     public void checkBox(View view) {
 
