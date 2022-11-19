@@ -21,7 +21,7 @@
 
         <Spinner
             android:id="@+id/numOrigem"
-            android:layout_width="fill_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:layout_toRightOf="@id/txtOrigem"
@@ -38,7 +38,7 @@
 
         <Spinner
             android:id="@+id/numDestino"
-            android:layout_width="fill_parent"
+            android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/numOrigem"
             android:layout_marginLeft="3dp"
@@ -74,14 +74,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/chkDijkstra"
-            android:numColumns="1"/>
+            android:numColumns="1" />
 
         <ImageView
             android:id="@+id/mapa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/numDestino"
-            android:layout_toRightOf="@id/btnBuscar"/>
+            android:layout_below="@id/numOrigem"
+            android:layout_toRightOf="@id/numOrigem" />
 
     </RelativeLayout>
 

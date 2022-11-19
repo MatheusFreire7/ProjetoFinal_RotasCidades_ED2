@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class Grafo {
+public class Grafo
+{
     private final int NUM_VERTICES = 20;
     private Vertice[] vertices;
     private int[][] adjMatrix;
@@ -34,9 +35,7 @@ public class Grafo {
         return NUM_VERTICES;
     }
 
-    public Vertice[] getVertices() {
-        return vertices;
-    }
+    public Vertice[] getVertices() {return vertices;}
 
     public void setVertices(Vertice[] vertices) {
         this.vertices = vertices;
