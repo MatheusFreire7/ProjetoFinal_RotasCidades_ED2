@@ -6,36 +6,23 @@ package br.unicamp.approtascidades;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Picture;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.wifi.aware.AwareResources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.GridView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,7 +33,6 @@ import java.util.List;
 import br.unicamp.approtascidades.Backtracking.GrafoBactracking;
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
-import br.unicamp.approtascidades.Grafo.Grafo;
 import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
@@ -65,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     Cidade Origem;
     Cidade Destino;
     boolean mostrouCidade = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +93,15 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        binding.gvLista.setOnItemClickListener(new GridView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getBaseContext(), "Cidade: " + encontrarIdAdapter(position), Toast.LENGTH_LONG).show();
+            }
+        });
+
 
 
 
@@ -592,6 +588,18 @@ public class MainActivity extends AppCompatActivity {
     {
 
     }
+    public String encontrarIdAdapter(int position)
+    {
+        String id = " ";
+
+        for(int i = 0; i<= position; i++)
+        {
+            if(i == position)
+                id = listaCaminhos.get(i).getIdDestino();
+        }
+        return id;
+    }
+
 
     public void checkBox(View view) {
 
