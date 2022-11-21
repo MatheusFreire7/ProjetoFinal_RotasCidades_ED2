@@ -37,7 +37,7 @@ import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-    //Cidade vetorCidade[];
+    Cidade vetorCidade[];
     int matrizCaminho[][];
     GrafoBactracking grafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
@@ -111,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     boolean checkedRecursao = ((CheckBox) binding.chkRecursao).isChecked(); // vericamos se os checkedBox estão clicados
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
-                    MostrarCidades();
                     if(checkedRecursao == true)
                     {
+                        ExibirTodosCaminhos();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
@@ -157,20 +157,13 @@ public class MainActivity extends AppCompatActivity {
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
                JSONObject objCidade = new JSONObject(linha);
-               if(contCidades < 10)
-               {
-                    idCidade = " "+objCidade.getString("IdCidade");
-               }
-               if(contCidades >= 10)
-               {
-                   idCidade = objCidade.getString("IdCidade");
-               }
+                idCidade = objCidade.getString("IdCidade");
                String nomeCidade = objCidade.getString("NomeCidade");  //declaramos string para receber os campos do arquivo json
                String cordenadaX = objCidade.getString("CordenadaX");
                String cordenadaY = objCidade.getString("CordenadaY");
-               String linhaNova = idCidade+nomeCidade+cordenadaX+cordenadaY;
-                Cidade umCid = new Cidade(linhaNova);
-                listaCidade.add(umCid); //adicionamos a cidade na listaCidade
+               Cidade umCid = new Cidade(Integer.parseInt(idCidade.trim()),nomeCidade.trim(),Double.parseDouble(cordenadaX.trim()),Double.parseDouble(cordenadaY.trim()));
+               vetorCidade[contCidades] = umCid;
+               listaCidade.add(umCid); //adicionamos a cidade na listaCidade
                 listaNomeCidades.add(umCid.getNomeCidade()); // adicionamos o nome da cidade na listaNomeCidades
                 Log.d("Cidade", umCid.toString());
                 contCidades++; //incrementamos +1 ao contador
@@ -270,54 +263,10 @@ public class MainActivity extends AppCompatActivity {
                 String distancia = objCaminho.getString("Distancia");
                 String tempo = objCaminho.getString("Tempo");
                 String custo = objCaminho.getString("Custo");
-
-
-                if(idOrigem.length() < 2)
-                {
-                    while(idOrigem.length() < 2)
-                    {
-                        idOrigem = " " + idOrigem;
-                    }
-                }
-
-                if(idDestino.length() < 2)
-                {
-                    while (idDestino.length() < 2)
-                    {
-                        idDestino = " " + idDestino ;
-                    }
-                }
-
-                if(distancia.length() < 4)
-                {
-                    while (distancia.length() < 4)
-                    {
-                        distancia = 0 + distancia ;
-                    }
-                }
-
-                if(tempo.length() < 2)
-                {
-                    while (tempo.length() < 2) {
-                        tempo = 0 + tempo;
-                    }
-                }
-
-                if(custo.length() < 3)
-                {
-                    while (custo.length() < 3) {
-                        custo = 0 + custo;
-                    }
-                }
-
-                String linhaNova = idOrigem+idDestino+distancia+tempo+custo;
-                CaminhoCidade umCam = new CaminhoCidade(linhaNova); //Criamos um novo caminho a partir da linha lida
-                //Log.d("Linha", linha);
-                String idO = idOrigem.replace(" ", ""); //tiramos os espação em brancos dos id
-                String idD = idDestino.replace(" ", "");
+                CaminhoCidade umCam = new CaminhoCidade(idOrigem.trim(),idDestino.trim(),Integer.parseInt(distancia.trim()),Integer.parseInt(tempo.trim()),Integer.parseInt(custo.trim())); //Criamos um novo caminho a partir da linha lida
                 listaCaminhos.add(umCam); //adicionamos o caminho a lista de caminhos
                 caminhoAtual.Empilhar(umCam); //empilhamos o caminho na pilha
-                matrizCaminho[Integer.parseInt(idO)][Integer.parseInt(idD)] = umCam.getDistancia();
+                //matrizCaminho[][] = umCam.getDistancia();
                 // preenchemos a matriz com a distancia do caminho referente ao idOrigem e idDestino
                 // sendo idO o "idOrigem" representando a linha da matriz e idD o "idDestino" a coluna
             }
@@ -648,7 +597,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
+        vetorCidade = new Cidade[numCidades];
         listaCaminhos = new ArrayList<CaminhoCidade>();
         matrizCaminho = new int[numCidades][numCidades];
         grafo = new GrafoBactracking(numCidades, numCidades);
