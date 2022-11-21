@@ -33,24 +33,29 @@ import java.util.List;
 import br.unicamp.approtascidades.Backtracking.GrafoBactracking;
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
+import br.unicamp.approtascidades.Grafo.Grafo;
 import br.unicamp.approtascidades.Grafo.PilhaVetor;
+import br.unicamp.approtascidades.Grafo.Vertice;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     Cidade vetorCidade[];
     int matrizCaminho[][];
     GrafoBactracking grafo;
+    Grafo oGrafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
     List<PilhaVetor<CaminhoCidade>> pilhaCaminhos;
     PilhaVetor<CaminhoCidade> caminhoAtual = new PilhaVetor<>();
     List<String> listaNomeCidades = new ArrayList<String>();
     ActivityMainBinding binding;
+    List<PilhaVetor<CaminhoCidade>> cListaCaminhos;
     int numCidades = 23;
-    int menor;
     Cidade Origem;
     Cidade Destino;
     boolean mostrouCidade = false;
+    CaminhoCidade matrizBacktracking[][];
+
 
 
     @Override
@@ -94,15 +99,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         binding.gvLista.setOnItemClickListener(new GridView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getBaseContext(), "Cidade: " + encontrarIdAdapter(position), Toast.LENGTH_LONG).show();
             }
         });
-
-
 
 
         binding.btnBuscar.setOnClickListener(new View.OnClickListener() {
@@ -114,21 +116,42 @@ public class MainActivity extends AppCompatActivity {
                     if(checkedRecursao == true)
                     {
                         ExibirTodosCaminhos();
+                        ExibirMatrizAdjacencia();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
                         int idDestino = buscarId(String.valueOf(nomeCidadeDestino));
-//                      AcharCaminhosBacktracking(idOrigem,idDestino);
-//
-//                        if(caminhoAdapter.size() != 0)
-//                        {
-//                            MostrarCaminhos();
-//                        }
+
+                        if(idOrigem == idDestino)
+                            Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
+
+                         cListaCaminhos = grafo.BuscarCaminhosRec(idOrigem, idDestino,matrizBacktracking);
+                         // retorna lista de caminhos possiveis entre as cidades selecionadas
+                        // copia da lista de caminhos p / manipulá - la sem estragar os dados, os quais serão utilizados posteriormente
+                        for (int i = 0; i < listaCaminhos.size(); i++) {
+                            cListaCaminhos.add(cListaCaminhos.get(i).Clone());
+                        }
+                        gvListaAdapter gvAdapter = new gvListaAdapter(getBaseContext(), cListaCaminhos,listaCidade);
+                        binding.gvLista.setAdapter(gvAdapter);
+                        //PilhaVetor<CaminhoCidade> menorCaminho = grafo.MenorCaminhoBacktracking(cListaCaminhos.size(), cListaCaminhos, matrizBacktracking);
+                        //Toast.makeText(MainActivity.this, menorCaminho.toString(), Toast.LENGTH_LONG).show();
 
                     }
 
                     if(checkedDijkstra == true)
                     {
+                        Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
+                        int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
+                        Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
+                        int idDestino = buscarId(String.valueOf(nomeCidadeDestino));
+                        if(idOrigem == idDestino)
+                            Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
+
+                        MontarGrafodDjikstra();
+                        List<CaminhoCidade> caminhoCidades = new ArrayList<>();
+                        oGrafo.Caminho(idOrigem,idDestino,caminhoCidades);
+//                        gvListaAdapter gvAdapter = new gvListaAdapter(getBaseContext(), caminhoCidades,listaCidade);
+//                        binding.gvLista.setAdapter(gvAdapter);
 
                     }
 
@@ -218,6 +241,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     public void listaCompletaCidades(){
         if(listaCidade != null){
             for(int i = 0; i< listaCidade.size(); i++){
@@ -247,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     public void lerArquivoCaminhoJson() throws IOException {
         try {
             AssetManager assetManager = getResources().getAssets();
@@ -254,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream); //instanciamos um inputStreamReader
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String linha;
+            int contCidades = 0;
             LinkedList<String> linhas = new LinkedList<String>();
             while ((linha = bufferedReader.readLine())!= null){ // percorremos a linha enquanto ela é diferente de nula
                 linhas.add(linha);
@@ -264,14 +292,14 @@ public class MainActivity extends AppCompatActivity {
                 String tempo = objCaminho.getString("Tempo");
                 String custo = objCaminho.getString("Custo");
                 CaminhoCidade umCam = new CaminhoCidade(idOrigem.trim(),idDestino.trim(),Integer.parseInt(distancia.trim()),Integer.parseInt(tempo.trim()),Integer.parseInt(custo.trim())); //Criamos um novo caminho a partir da linha lida
+                CaminhoCidade caminhoMatriz = new CaminhoCidade(Integer.parseInt(distancia.trim()),Integer.parseInt(tempo.trim()),Integer.parseInt(custo.trim()));
                 listaCaminhos.add(umCam); //adicionamos o caminho a lista de caminhos
                 caminhoAtual.Empilhar(umCam); //empilhamos o caminho na pilha
-                //matrizCaminho[][] = umCam.getDistancia();
-                // preenchemos a matriz com a distancia do caminho referente ao idOrigem e idDestino
-                // sendo idO o "idOrigem" representando a linha da matriz e idD o "idDestino" a coluna
+                matrizBacktracking[Integer.parseInt(umCam.getIdOrigem())][Integer.parseInt(umCam.getIdDestino())] = umCam;
+                if(contCidades < 23)
+                    matrizCaminho[contCidades][contCidades] = caminhoMatriz.getDistancia();
+                contCidades++;
             }
-            gvListaAdapter gvAdapter = new gvListaAdapter(this, listaCaminhos,listaCidade);
-            binding.gvLista.setAdapter(gvAdapter);
             grafo.setAdjacencia(matrizCaminho); //set o grafo com a matrizCaminho
             inputStream.close(); //Fechamos o Arquivo
         }
@@ -314,99 +342,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void AcharCaminhosBacktracking(int origem, int destino) throws Exception
+    public void MontarGrafodDjikstra()
     {
-        List<PilhaVetor<CaminhoCidade>> listaCaminhosPilha = new ArrayList<PilhaVetor<CaminhoCidade>>();
+        for(int i = 0; i < listaCidade.size(); i++ )
+        {
+            oGrafo.NovoVertice(listaCidade.get(i).getIdCidade() + "");
+        }
 
-        int menorDistancia = Integer.MAX_VALUE, disAtual = 0;
-
-        PilhaVetor<CaminhoCidade> aux = new PilhaVetor<CaminhoCidade>();
-
-        boolean[] jaPassou = new boolean[23];
-        for (int i = 0; i < 23; i++)
-            jaPassou[i] = false;
-
-        int atual = origem;
-
-        boolean acabou = false;
-
-        while (!acabou) {
-            int tamanhoAnterior = aux.Tamanho();
-            for (int i = 0; i < 23; i++)
-                if (matrizCaminho[atual][i] != 0 && !jaPassou[i])
-                    aux.Empilhar(new CaminhoCidade(String.valueOf(atual),String.valueOf(i), matrizCaminho[atual][i]));
-                                        // Caminho criado possui idOrigem, IdDestino e Distancia
-
-            if (!aux.EstaVazia() && tamanhoAnterior == aux.Tamanho()) {
-                CaminhoCidade cam = caminhoAtual.Desempilhar();
-                disAtual -= cam.getDistancia();
-                jaPassou[Integer.parseInt(cam.getIdDestino())] = true;
-            }
-
-            if (aux.EstaVazia())
-                acabou = true;
-            else {
-                CaminhoCidade c = aux.Desempilhar();
-
-                    Log.d("Topo","" +caminhoAtual.OTopo().getIdOrigem());
-                    while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino()!= c.getIdOrigem()) {
-                        CaminhoCidade cam = caminhoAtual.Desempilhar();
-                        disAtual -= cam.getDistancia();
-                        jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
-                    }
-
-                caminhoAtual.Empilhar(c);
-                disAtual += c.getDistancia();
-
-                if (Integer.parseInt(c.getIdDestino()) != destino) {
-                    jaPassou[Integer.parseInt(c.getIdOrigem())] = true;
-                    atual = Integer.parseInt(c.getIdDestino());
-                } else {
-                    listaCaminhosPilha.add(caminhoAtual.Clone());
-                    if (disAtual < menorDistancia) {
-                        menor = listaCaminhosPilha.size() - 1;
-                        menorDistancia = disAtual;
-                    }
-
-                    if (aux.EstaVazia())
-                        acabou = true;
-                    else {
-                        CaminhoCidade retorno = aux.Desempilhar();
-
-                        while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino() != retorno.getIdOrigem()) {
-                            CaminhoCidade cam = caminhoAtual.Desempilhar();
-                            disAtual -= cam.getDistancia();
-                            jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
-                        }
-
-                        caminhoAtual.Empilhar(retorno);
-                        jaPassou[Integer.parseInt(retorno.getIdDestino())] = true;
-                        disAtual += retorno.getDistancia();
-
-                        while (Integer.parseInt(retorno.getIdDestino()) == destino && !acabou) {
-                            listaCaminhosPilha.add(caminhoAtual.Clone());
-
-                            if (disAtual < menorDistancia) {
-                                menor = listaCaminhosPilha.size() - 1;
-                                menorDistancia = disAtual;
-                            }
-
-                            if (!aux.EstaVazia()) {
-                                retorno = aux.Desempilhar();
-                                while (!caminhoAtual.EstaVazia() && caminhoAtual.OTopo().getIdDestino() != retorno.getIdOrigem()) {
-                                    CaminhoCidade cam = caminhoAtual.Desempilhar();
-                                    disAtual -= cam.getDistancia();
-                                    jaPassou[Integer.parseInt(cam.getIdDestino())] = false;
-                                }
-
-                                caminhoAtual.Empilhar(retorno);
-                                disAtual += retorno.getDistancia();
-                            } else
-                                acabou = true;
-                        }
-
-                        atual = Integer.parseInt(retorno.getIdDestino());
-                    }
+        for (int i = 0; i < Math.pow(listaCaminhos.size(), 0.5); i++)
+        {
+            for (int j = 0; j < Math.pow(listaCaminhos.size(), 0.5); j++)
+            {
+                if (matrizCaminho[i][j] != 0)
+                {
+                    oGrafo.NovaAresta(i, j, matrizCaminho[i][j]);
                 }
             }
         }
@@ -593,20 +542,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void preencherBacktracking()
+    {
+        for(int i = 0; i < matrizBacktracking.length; i++)
+        {
+            for (int j = 0; j < matrizBacktracking.length; j++)
+            {
+                if(matrizBacktracking[i][j] == null)
+                {
+                    CaminhoCidade caminhoCidade = new CaminhoCidade(" "," ", 0,0,0);
+                    matrizBacktracking[i][j] = caminhoCidade;
+                }
+            }
+        }
+    }
+
+
     @Override
     protected void onStart() {
         super.onStart();
-
+        cListaCaminhos = new ArrayList<>();
+        oGrafo = new Grafo(numCidades,numCidades);
         vetorCidade = new Cidade[numCidades];
         listaCaminhos = new ArrayList<CaminhoCidade>();
         matrizCaminho = new int[numCidades][numCidades];
         grafo = new GrafoBactracking(numCidades, numCidades);
         pilhaCaminhos = new ArrayList<>();
+        matrizBacktracking = new CaminhoCidade[numCidades][numCidades];
 
         try
         {
             lerArquivoCidadeJson();
-            listaCompletaCidades();
+            //listaCompletaCidades();
 
         } catch (IOException e)
         {
@@ -616,7 +583,8 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             lerArquivoCaminhoJson();
-            listaCompletacCaminhos();
+            preencherBacktracking();
+            //listaCompletacCaminhos();
             //ExibirMatrizAdjacencia();
         } catch (IOException e) {
             e.printStackTrace();

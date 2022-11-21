@@ -40,10 +40,10 @@ public class CaminhoCidade
         this.tempo = tempo;
     }
 
-    public CaminhoCidade(String idOrigem, String idDestino, int distancia) {
-        this.idOrigem = idOrigem;
-        this.idDestino = idDestino;
+    public CaminhoCidade(int distancia, int tempo, int custo) {
         this.distancia = distancia;
+        this.tempo = tempo;
+        this.custo = custo;
     }
 
     public CaminhoCidade(String linha)

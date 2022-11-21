@@ -3,31 +3,29 @@
 
 package br.unicamp.approtascidades;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
+import br.unicamp.approtascidades.Grafo.PilhaVetor;
 
 public class gvListaAdapter extends ArrayAdapter<CaminhoCidade> {
     List<Cidade> listCidade = null;
+    List<PilhaVetor<CaminhoCidade>> listCaminhoCidade;
 
-    public gvListaAdapter(@NonNull Context context, List<CaminhoCidade> listCaminhoCidade, List<Cidade> ListCidade) {
-        super(context,0 ,listCaminhoCidade);
+    public gvListaAdapter(@NonNull Context context, List<PilhaVetor<CaminhoCidade>> ListCaminhoCidade, List<Cidade> ListCidade) {
+        super(context,0 );
+        this.listCaminhoCidade = ListCaminhoCidade;
         this.listCidade = ListCidade;
 
     }

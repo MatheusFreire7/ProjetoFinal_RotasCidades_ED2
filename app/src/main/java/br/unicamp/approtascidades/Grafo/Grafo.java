@@ -4,6 +4,7 @@
 package br.unicamp.approtascidades.Grafo;
 
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -17,7 +18,7 @@ import java.util.Stack;
 
 public class Grafo
 {
-    private final int NUM_VERTICES = 20;
+    private final int NUM_VERTICES = 23;
     private Vertice[] vertices;
     private int[][] adjMatrix;
     private int numVerts;
@@ -84,6 +85,8 @@ public class Grafo
     public Grafo(int tamanhoLinhas, int tamanhoColunas)
     {
         adjMatrix = new int[tamanhoLinhas][tamanhoColunas];
+        vertices = new Vertice[tamanhoColunas];
+        percurso = new DistOriginal[NUM_VERTICES];
     }
 
 
@@ -91,15 +94,11 @@ public class Grafo
     {
         vertices[numVerts] = new Vertice(label);
         numVerts++;
-        if (gridView != null) // se foi passado como parâmetro um dataGridView para exibição
-        { // se realiza o seu ajuste para a quantidade de vértices
-
-        }
     }
 
-    public void NovaAresta(int start, int end)
+    public void NovaAresta(int start, int end, int distancia)
     {
-        adjMatrix[start][end] = 1; // adjMatrix[eend, start] = 1; ISSO GERA CICLOS!!!
+        adjMatrix[start][end] = distancia; // adjMatrix[eend, start] = 1; ISSO GERA CICLOS!!!
     }
     public String ExibirVertice(int v)
     {
@@ -227,7 +226,7 @@ public class Grafo
         for (int j = 0; j < numVerts; j++)
             vertices[j].foiVisitado = false;
         vertices[inicioDoPercurso].foiVisitado = true;
-        for (int j = 0; j < numVerts; j++)
+        for (int j = 0; j < NUM_VERTICES; j++)
         {
             // anotamos no vetor percurso a distância entre o inicioDoPercurso e cada vértice
             // se não há ligação direta, o valor da distância será infinity
@@ -255,13 +254,15 @@ public class Grafo
     {
         int distanciaMinima = infinity;
         int indiceDaMinima = 0;
-        for (int j = 0; j < numVerts; j++)
-            if (!(vertices[j].foiVisitado) && (percurso[j].distancia <distanciaMinima))
-            {
+        for (int j = 0; j < numVerts; j++) {
+            Log.d("percurso", percurso[j].distancia + "");
+            if (!(vertices[j].foiVisitado) && (percurso[j].distancia < distanciaMinima)) {
                 distanciaMinima = percurso[j].distancia;
                 indiceDaMinima = j;
             }
-        return indiceDaMinima;
+        }
+            return indiceDaMinima;
+
     }
     public void AjustarMenorCaminho(List lista)
     {
