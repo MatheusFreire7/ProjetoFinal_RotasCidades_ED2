@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
                     if(checkedRecursao == true)
                     {
+                        ExibirTodosCaminhos();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if(resultado != " ")
                         {
-                            Toast.makeText(MainActivity.this, resultado, Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this,resultado, Toast.LENGTH_LONG).show();
                         }
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
@@ -175,13 +176,18 @@ public class MainActivity extends AppCompatActivity {
                         {
                             PilhaLista<CaminhoCidade> pilhaCam = pilhaCaminhos; // pega o lin-ésimo caminho
                             PilhaLista<CaminhoCidade> copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
+                            gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
+                            binding.gvLista.setAdapter(gvAdapter);
                             CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
-                            resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia();
+                            if(lin < linhas -1)
+                                resultado += "IdCidade: " + cidade.getIdOrigem() + "\n";
+                            else
+                                resultado += "IdCidade: " + cidade.getIdOrigem();
 
                             pilhaCam.Desempilhar();
                         }
                         if(resultado != " ")
-                            Toast.makeText(MainActivity.this, resultado, Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this,resultado, Toast.LENGTH_LONG).show();
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
 

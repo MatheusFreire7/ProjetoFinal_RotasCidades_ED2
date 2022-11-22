@@ -1,3 +1,6 @@
+//Luiz Henrique Parolim Domingues - 21248
+//Matheus Henrique de Oliveira Freire - 21251
+
 package br.unicamp.approtascidades.Solucao;
 
 import android.app.Activity;
@@ -22,7 +25,8 @@ import br.unicamp.approtascidades.Grafo.Cidade;
 import br.unicamp.approtascidades.Grafo.Vertice;
 import br.unicamp.approtascidades.MainActivity;
 
-public class SolucaoCaminhos  extends Activity {
+public class SolucaoCaminhos  extends Activity
+{
     // atributos utilizada pela classe toda
     private CaminhoCidade[][] matriz;
     // matriz de caminhoCidade em que, onde há caminho entre as cidades de id i e j (tomando matriz[i, j])
@@ -57,7 +61,8 @@ public class SolucaoCaminhos  extends Activity {
             }
         }
 
-        try {
+        try
+        {
             AssetManager assetManager = context.getResources().getAssets();
             InputStream inputStream = assetManager.open("cidadeCorreto.json"); //abrimos o arquivo na pasta assets
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
@@ -121,7 +126,8 @@ public class SolucaoCaminhos  extends Activity {
     private boolean achouCaminho, naoTemSaida;
     private boolean[] passou;
 
-    public List<PilhaLista<CaminhoCidade>> BuscarCaminhosRec(int origem, int destino) throws Exception {
+    public List<PilhaLista<CaminhoCidade>> BuscarCaminhosRec(int origem, int destino) throws Exception
+    {
         // (re)inicia as variáveis
         listaCaminhos = new ArrayList<PilhaLista<CaminhoCidade>>();
         caminho = new PilhaLista<CaminhoCidade>();
@@ -301,7 +307,7 @@ public class SolucaoCaminhos  extends Activity {
                 int atualAteMargem = 0;
                 atualAteMargem = matriz[verticeAtual][coluna].getDistancia();
 
-                // calculamos o valor do criterio desde inicioDoPercurso passando por vertice atual até esta saída
+                // calculamos o valor da distancia desde inicioDoPercurso passando por vertice atual até esta saída
                 int doInicioAteMargem = doInicioAteAtual + atualAteMargem;
                 // quando encontra um dado menor, marca o vértice a partir do
                 // qual chegamos no vértice de índice coluna, e a soma do valor
