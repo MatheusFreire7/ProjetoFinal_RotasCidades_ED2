@@ -36,6 +36,8 @@ import br.unicamp.approtascidades.Grafo.Cidade;
 import br.unicamp.approtascidades.Grafo.Grafo;
 import br.unicamp.approtascidades.Grafo.PilhaVetor;
 import br.unicamp.approtascidades.Grafo.Vertice;
+import br.unicamp.approtascidades.Solucao.PilhaLista;
+import br.unicamp.approtascidades.Solucao.SolucaoCaminhos;
 import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,17 +47,18 @@ public class MainActivity extends AppCompatActivity {
     Grafo oGrafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
-    List<PilhaVetor<CaminhoCidade>> pilhaCaminhos;
+    PilhaLista<CaminhoCidade> pilhaCaminhos;
     PilhaVetor<CaminhoCidade> caminhoAtual = new PilhaVetor<>();
     List<String> listaNomeCidades = new ArrayList<String>();
     ActivityMainBinding binding;
-    List<PilhaVetor<CaminhoCidade>> cListaCaminhos;
+    List<PilhaLista<CaminhoCidade>> cListaCaminhos;
     int numCidades = 23;
     Cidade Origem;
     Cidade Destino;
     boolean mostrouCidade = false;
     CaminhoCidade matrizBacktracking[][];
-
+    SolucaoCaminhos solucaoCaminhos;
+    List<PilhaLista> listaCaminhosEncontrados;
 
 
     @Override
@@ -66,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 //        ArrayList<CaminhoCidade> caminhoAdapter = new ArrayList<CaminhoCidade>();
-//        gvListaAdapter gvAdapter = new gvListaAdapter(this, caminhoAdapter);
-//        binding.gvLista.setAdapter(gvAdapter);
+
 
 //        ImageView mapa;
 //        mapa = findViewById(R.id.mapa);
@@ -115,8 +117,6 @@ public class MainActivity extends AppCompatActivity {
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
                     if(checkedRecursao == true)
                     {
-                        ExibirTodosCaminhos();
-                        ExibirMatrizAdjacencia();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
@@ -125,16 +125,36 @@ public class MainActivity extends AppCompatActivity {
                         if(idOrigem == idDestino)
                             Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
 
-                         cListaCaminhos = grafo.BuscarCaminhosRec(idOrigem, idDestino,matrizBacktracking);
+                         cListaCaminhos = solucaoCaminhos.BuscarCaminhosRec(idOrigem, idDestino);
                          // retorna lista de caminhos possiveis entre as cidades selecionadas
                         // copia da lista de caminhos p / manipulá - la sem estragar os dados, os quais serão utilizados posteriormente
-                        for (int i = 0; i < listaCaminhos.size(); i++) {
-                            cListaCaminhos.add(cListaCaminhos.get(i).Clone());
+                        listaCaminhosEncontrados = new ArrayList<>();
+                        for (int i = 0; i < cListaCaminhos.size(); i++) {
+                            listaCaminhosEncontrados.add(cListaCaminhos.get(i).Copia());
                         }
-                        gvListaAdapter gvAdapter = new gvListaAdapter(getBaseContext(), cListaCaminhos,listaCidade);
-                        binding.gvLista.setAdapter(gvAdapter);
-                        //PilhaVetor<CaminhoCidade> menorCaminho = grafo.MenorCaminhoBacktracking(cListaCaminhos.size(), cListaCaminhos, matrizBacktracking);
-                        //Toast.makeText(MainActivity.this, menorCaminho.toString(), Toast.LENGTH_LONG).show();
+                        int linhas = cListaCaminhos.size();
+                        String resultado = " ";
+
+                        for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
+                        {
+                            PilhaLista<CaminhoCidade> pilhaCam = cListaCaminhos.get(lin); // pega o lin-ésimo caminho
+                            PilhaLista<CaminhoCidade> copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
+                            gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
+                            binding.gvLista.setAdapter(gvAdapter);
+                            CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
+                            if(lin < linhas -1)
+                                resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia() + "\n";
+                            else
+                                resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia();
+
+                            pilhaCam.Desempilhar();
+                        }
+                        if(resultado != " ")
+                        {
+                            Toast.makeText(MainActivity.this, resultado, Toast.LENGTH_LONG).show();
+                        }
+                        else
+                            Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -147,14 +167,25 @@ public class MainActivity extends AppCompatActivity {
                         if(idOrigem == idDestino)
                             Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
 
-                        MontarGrafodDjikstra();
-                        List<CaminhoCidade> caminhoCidades = new ArrayList<>();
-                        oGrafo.Caminho(idOrigem,idDestino,caminhoCidades);
-//                        gvListaAdapter gvAdapter = new gvListaAdapter(getBaseContext(), caminhoCidades,listaCidade);
-//                        binding.gvLista.setAdapter(gvAdapter);
+                        pilhaCaminhos = solucaoCaminhos.MenorCaminhoDijkstra(idOrigem,idDestino);
+
+                        int linhas = pilhaCaminhos.getTamanho();
+                        String resultado = " ";
+                        for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
+                        {
+                            PilhaLista<CaminhoCidade> pilhaCam = pilhaCaminhos; // pega o lin-ésimo caminho
+                            PilhaLista<CaminhoCidade> copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
+                            CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
+                            resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia();
+
+                            pilhaCam.Desempilhar();
+                        }
+                        if(resultado != " ")
+                            Toast.makeText(MainActivity.this, resultado, Toast.LENGTH_LONG).show();
+                        else
+                            Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
 
                     }
-
                     if(checkedDijkstra == false && checkedRecursao == false)
                         Toast.makeText(MainActivity.this, "Clique em um dos checkedBox para poder Buscar", Toast.LENGTH_LONG).show();
 
@@ -373,22 +404,22 @@ public class MainActivity extends AppCompatActivity {
         }
         return idCidade;
     }
-    public void MostrarCaminhos() throws Exception
-    {
-        for (PilhaVetor<CaminhoCidade> caminho : pilhaCaminhos)
-        {
-            int posição = 0;
-            PilhaVetor<CaminhoCidade> aux = caminho.Clone();
-            aux.Inverter();
-
-            while (!aux.EstaVazia())
-            {
-                CaminhoCidade c = aux.Desempilhar();
-                listaCaminhos.add(c);
-            }
-        }
-
-    }
+//    public void MostrarCaminhos() throws Exception
+//    {
+//        for (PilhaVetor<CaminhoCidade> caminho : pilhaCaminhos)
+//        {
+//            int posição = 0;
+//            PilhaVetor<CaminhoCidade> aux = caminho.Clone();
+//            aux.Inverter();
+//
+//            while (!aux.EstaVazia())
+//            {
+//                CaminhoCidade c = aux.Desempilhar();
+//                listaCaminhos.add(c);
+//            }
+//        }
+//
+//    }
 
     public void MostrarCidades()
     {
@@ -477,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void ExibirMenorCaminho()
+    public void ExibirMenorCaminho() throws Exception
     {
 
     }
@@ -567,8 +598,9 @@ public class MainActivity extends AppCompatActivity {
         listaCaminhos = new ArrayList<CaminhoCidade>();
         matrizCaminho = new int[numCidades][numCidades];
         grafo = new GrafoBactracking(numCidades, numCidades);
-        pilhaCaminhos = new ArrayList<>();
+        pilhaCaminhos = new PilhaLista<>();
         matrizBacktracking = new CaminhoCidade[numCidades][numCidades];
+        solucaoCaminhos = new SolucaoCaminhos(getBaseContext());
 
         try
         {

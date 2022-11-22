@@ -5,8 +5,7 @@ package br.unicamp.approtascidades.Grafo;
 
 import android.util.Log;
 
-public class CaminhoCidade
-{
+public class CaminhoCidade implements Comparable<CaminhoCidade> {
     private String idOrigem;
     private String idDestino;
     private int distancia;
@@ -44,6 +43,11 @@ public class CaminhoCidade
         this.distancia = distancia;
         this.tempo = tempo;
         this.custo = custo;
+    }
+
+    public CaminhoCidade(String idOrigem, int distancia) {
+        this.idOrigem = idOrigem;
+        this.distancia = distancia;
     }
 
     public CaminhoCidade(String linha)
@@ -119,4 +123,16 @@ public class CaminhoCidade
         }
     }
 
+    @Override
+    public int compareTo(CaminhoCidade o)
+    {
+       if(this.distancia == o.getDistancia())
+           return 0;
+       else
+       if(o.getDistancia() > this.distancia)
+           return 1;
+       else
+           return 2;
+
+    }
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,15 +19,24 @@ import java.util.List;
 import br.unicamp.approtascidades.Grafo.CaminhoCidade;
 import br.unicamp.approtascidades.Grafo.Cidade;
 import br.unicamp.approtascidades.Grafo.PilhaVetor;
+import br.unicamp.approtascidades.Solucao.PilhaLista;
 
-public class gvListaAdapter extends ArrayAdapter<CaminhoCidade> {
+public class gvListaAdapter extends ArrayAdapter<CaminhoCidade>
+{
     List<Cidade> listCidade = null;
     List<PilhaVetor<CaminhoCidade>> listCaminhoCidade;
+    List<PilhaLista<CaminhoCidade>> listaPilhaListaCaminho;
 
     public gvListaAdapter(@NonNull Context context, List<PilhaVetor<CaminhoCidade>> ListCaminhoCidade, List<Cidade> ListCidade) {
         super(context,0 );
         this.listCaminhoCidade = ListCaminhoCidade;
         this.listCidade = ListCidade;
+
+    }
+
+    public gvListaAdapter(@NonNull Context context, List<PilhaLista<CaminhoCidade>> ListaPilhaListaCaminho) {
+        super(context,0 );
+        this.listaPilhaListaCaminho = ListaPilhaListaCaminho;
 
     }
 
@@ -45,6 +55,7 @@ public class gvListaAdapter extends ArrayAdapter<CaminhoCidade> {
         }
         CaminhoCidade caminhoCidade = getItem(position);
         TextView txtCaminho = listitemView.findViewById(R.id.tvCaminho);
+
         if(buscarNome(caminhoCidade.getIdDestino()) != " ")
         {
             txtCaminho.setText(buscarNome(caminhoCidade.getIdDestino()));
