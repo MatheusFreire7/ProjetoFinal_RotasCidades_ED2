@@ -92,8 +92,16 @@ public class Grafo
 
     public void NovoVertice(String label)
     {
-        vertices[numVerts] = new Vertice(label);
-        numVerts++;
+        if(numVerts == vertices.length)
+            numVerts = 0;
+        try {
+            vertices[numVerts] = new Vertice(label);
+            numVerts++;
+        }
+        catch (Exception e)
+        {
+            Log.d("Erro:", e.getMessage());
+        }
     }
 
     public void NovaAresta(int start, int end, int distancia)
@@ -256,9 +264,11 @@ public class Grafo
         int indiceDaMinima = 0;
         for (int j = 0; j < numVerts; j++) {
             Log.d("percurso", percurso[j].distancia + "");
-            if (!(vertices[j].foiVisitado) && (percurso[j].distancia < distanciaMinima)) {
-                distanciaMinima = percurso[j].distancia;
-                indiceDaMinima = j;
+            if (!(vertices[j].foiVisitado))
+                if(percurso[j].distancia < distanciaMinima && percurso[j].distancia != 0) {
+                    distanciaMinima = percurso[j].distancia;
+                    indiceDaMinima = j;
+
             }
         }
             return indiceDaMinima;
