@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
                     if(checkedRecursao == true)
                     {
-                        ExibirTodosCaminhos();
                         Object nomeCidadeOrigem = binding.numOrigem.getSelectedItem();
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
@@ -134,25 +133,43 @@ public class MainActivity extends AppCompatActivity {
                             listaCaminhosEncontrados.add(cListaCaminhos.get(i).Copia());
                         }
                         int linhas = cListaCaminhos.size();
-                        String resultado = " ";
+                        List resultado = new ArrayList();
+                        //String resultado = " ";
+                        PilhaLista<CaminhoCidade> pilhaCam = null;
+                        PilhaLista<CaminhoCidade> copia = null;
 
                         for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
                         {
-                            PilhaLista<CaminhoCidade> pilhaCam = cListaCaminhos.get(lin); // pega o lin-ésimo caminho
-                            PilhaLista<CaminhoCidade> copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
-                            gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
-                            binding.gvLista.setAdapter(gvAdapter);
+                            pilhaCam = cListaCaminhos.get(lin); // pega o lin-ésimo caminho
+                            copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
+//                          gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
+//                           binding.gvLista.setAdapter(gvAdapter);
                             CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
                             if(lin < linhas -1)
-                                resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia() + "\n";
+                            {
+                                Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
+                                resultado.add(umCid.getNomeCidade());
+                                //resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia() + "\n";
+                                //resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia() + "\n";
+                            }
                             else
-                                resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia();
+                            {
+                                Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
+                                resultado.add(umCid.getNomeCidade());
+                            }
+                                //resultado.add(buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim())));
+                                //resultado.add("IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia());
+                                //resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia();
 
                             pilhaCam.Desempilhar();
                         }
-                        if(resultado != " ")
+                        if(resultado.size() > 0) //resultado != " "
                         {
-                            Toast.makeText(MainActivity.this,resultado, Toast.LENGTH_LONG).show();
+                            ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
+                            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                            binding.gvLista.setAdapter(adapterString);
+                            DesenharCaminho(copia);
+                            //Toast.makeText(MainActivity.this,resultado, Toast.LENGTH_LONG).show();
                         }
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
@@ -169,25 +186,38 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
 
                         pilhaCaminhos = solucaoCaminhos.MenorCaminhoDijkstra(idOrigem,idDestino);
+                        PilhaLista<CaminhoCidade> pilhaCam = pilhaCaminhos; // pega o lin-ésimo caminho
+                        PilhaLista<CaminhoCidade> copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
+                        gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
+                        binding.gvLista.setAdapter(gvAdapter);
 
                         int linhas = pilhaCaminhos.getTamanho();
-                        String resultado = " ";
+                        List resultado = new ArrayList();
+                        resultado.add("Cidades que passou");
+                        //String resultado = " ";
                         for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
                         {
-                            PilhaLista<CaminhoCidade> pilhaCam = pilhaCaminhos; // pega o lin-ésimo caminho
-                            PilhaLista<CaminhoCidade> copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
-                            gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
-                            binding.gvLista.setAdapter(gvAdapter);
                             CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
                             if(lin < linhas -1)
-                                resultado += "IdCidade: " + cidade.getIdOrigem() + "\n";
+                            {
+                                Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
+                                resultado.add(umCid.getNomeCidade());
+                            }
                             else
-                                resultado += "IdCidade: " + cidade.getIdOrigem();
+                            {
+                                Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
+                                resultado.add(umCid.getNomeCidade());
+                            }
 
                             pilhaCam.Desempilhar();
                         }
-                        if(resultado != " ")
-                            Toast.makeText(MainActivity.this,resultado, Toast.LENGTH_LONG).show();
+                        if(resultado.size() > 0)
+                        {
+                            ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
+                            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                            binding.gvLista.setAdapter(adapterString);
+                            DesenharCaminho(copia);
+                        }
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
 
@@ -410,22 +440,42 @@ public class MainActivity extends AppCompatActivity {
         }
         return idCidade;
     }
-//    public void MostrarCaminhos() throws Exception
-//    {
-//        for (PilhaVetor<CaminhoCidade> caminho : pilhaCaminhos)
-//        {
-//            int posição = 0;
-//            PilhaVetor<CaminhoCidade> aux = caminho.Clone();
-//            aux.Inverter();
-//
-//            while (!aux.EstaVazia())
-//            {
-//                CaminhoCidade c = aux.Desempilhar();
-//                listaCaminhos.add(c);
-//            }
-//        }
-//
-//    }
+
+    public Cidade buscarCidade(int idCidade)
+    {
+        Cidade umCid = null;
+
+        for(int i = 0; i < listaCidade.size(); i++)
+        {
+            if(idCidade == listaCidade.get(i).getIdCidade())
+                umCid = new Cidade(listaCidade.get(i).getIdCidade(), listaCidade.get(i).getNomeCidade(), listaCidade.get(i).getCordenadaX(), listaCidade.get(i).getCordenadaY());
+        }
+
+        return umCid;
+    }
+
+    public void DesenharCaminho(PilhaLista<CaminhoCidade> caminho) throws Exception {
+        Paint paint =  new Paint(); // instanciamos a classe Paint
+        paint.setColor(Color.BLACK); //setamos os atributos cor e tamanho de texto
+        paint.setTextSize(20);
+        binding.mapa.buildDrawingCache();
+        int altura = binding.mapa.getDrawingCache().getHeight();  //pegamos a altura e largura do mapa
+        int largura = binding.mapa.getDrawingCache().getWidth();
+        Bitmap bitmap = Bitmap.createBitmap(largura,altura, Bitmap.Config.ARGB_8888);
+        bitmap = bitmap.copy(bitmap.getConfig(),true);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(binding.mapa.getDrawingCache(),0,0,null);
+
+        while(!caminho.EstaVazia())
+        {
+           CaminhoCidade atual =  caminho.OTopo();
+           Cidade origem  = buscarCidade(Integer.parseInt(atual.getIdOrigem().trim()));
+           Cidade destino = buscarCidade(Integer.parseInt(atual.getIdDestino().trim()));
+           canvas.drawLine((float)origem.getCordenadaX() * largura,(float) origem.getCordenadaY() * altura,(float) destino.getCordenadaX() * largura,(float) destino.getCordenadaY() * altura,paint);
+           caminho.Desempilhar();
+        }
+        binding.mapa.setImageBitmap(bitmap);
+    }
 
     public void MostrarCidades()
     {

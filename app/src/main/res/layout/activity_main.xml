@@ -69,12 +69,14 @@
             android:layout_toRightOf="@id/chkRecursao"
             android:text="Buscar" />
 
-        <GridView
-            android:id="@+id/gvLista"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/chkDijkstra"
-            android:numColumns="1" />
+
+            <GridView
+                android:id="@+id/gvLista"
+                android:layout_width="230dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chkDijkstra"
+                android:numColumns="1"
+                android:scrollbars="vertical" />
 
         <ImageView
             android:id="@+id/mapa"
