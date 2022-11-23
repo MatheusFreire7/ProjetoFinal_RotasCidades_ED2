@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        ArrayList<CaminhoCidade> caminhoAdapter = new ArrayList<CaminhoCidade>();
 
 
+        //Utilização da biblioteca Picasso
 //        ImageView mapa;
 //        mapa = findViewById(R.id.mapa);
 //        Picasso.get().load(R.drawable.mapa).into(mapa); //Carregamos a imagem do Mapa de marte com a biblioteca Picasso
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         binding.gvLista.setOnItemClickListener(new GridView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getBaseContext(), "Cidade: " + encontrarIdAdapter(position), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -134,42 +134,34 @@ public class MainActivity extends AppCompatActivity {
                         }
                         int linhas = cListaCaminhos.size();
                         List resultado = new ArrayList();
-                        //String resultado = " ";
+                        resultado.add("Cidades que passou");
                         PilhaLista<CaminhoCidade> pilhaCam = null;
                         PilhaLista<CaminhoCidade> copia = null;
-
                         for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
                         {
                             pilhaCam = cListaCaminhos.get(lin); // pega o lin-ésimo caminho
                             copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
-//                          gvPilhaAdapter gvAdapter = new gvPilhaAdapter(getBaseContext(), copia);
-//                           binding.gvLista.setAdapter(gvAdapter);
                             CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
                             if(lin < linhas -1)
                             {
                                 Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
                                 resultado.add(umCid.getNomeCidade());
-                                //resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia() + "\n";
-                                //resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia() + "\n";
+                                resultado.add("Distância: " + cidade.getDistancia());
                             }
                             else
                             {
                                 Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
                                 resultado.add(umCid.getNomeCidade());
+                                resultado.add("Distância: " + cidade.getDistancia());
                             }
-                                //resultado.add(buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim())));
-                                //resultado.add("IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia());
-                                //resultado += "IdCidade: " + cidade.getIdOrigem() + " Distancia: " + cidade.getDistancia();
-
                             pilhaCam.Desempilhar();
                         }
-                        if(resultado.size() > 0) //resultado != " "
+                        if(resultado.size() > 1) //resultado != " "
                         {
                             ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
                             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
                             binding.gvLista.setAdapter(adapterString);
                             DesenharCaminho(copia);
-                            //Toast.makeText(MainActivity.this,resultado, Toast.LENGTH_LONG).show();
                         }
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
@@ -194,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
                         int linhas = pilhaCaminhos.getTamanho();
                         List resultado = new ArrayList();
                         resultado.add("Cidades que passou");
-                        //String resultado = " ";
                         for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
                         {
                             CaminhoCidade cidade =new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
@@ -211,10 +202,10 @@ public class MainActivity extends AppCompatActivity {
 
                             pilhaCam.Desempilhar();
                         }
-                        if(resultado.size() > 0)
+                        if(resultado.size() > 1)
                         {
                             ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
-                            adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                            adapterString.setDropDownViewResource(android.R.layout.simple_list_item_1);
                             binding.gvLista.setAdapter(adapterString);
                             DesenharCaminho(copia);
                         }
@@ -227,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 } catch (Exception e) {
-                    Toast.makeText(MainActivity.this, "Erro na Leitura do Arquivo", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Falha ao Encontrar Caminhos", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
@@ -564,71 +555,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void ExibirMenorCaminho() throws Exception
-    {
-
-    }
-
-    public void BuscarDijkstra()
-    {
-
-    }
-    public String encontrarIdAdapter(int position)
-    {
-        String id = " ";
-
-        for(int i = 0; i<= position; i++)
-        {
-            if(i == position)
-                id = listaCaminhos.get(i).getIdDestino();
-        }
-        return id;
-    }
-
-    public String encontrarNomeAdapter(int position)
-    {
-        String id = " ";
-
-        for(int i = 0; i<= position; i++)
-        {
-            if(i == position)
-                id = listaCaminhos.get(i).getIdDestino();
-        }
-
-        String nome = " ";
-
-        for(int i = 0; i< listaCidade.size(); i++)
-        {
-            if(listaCidade.get(i).getIdCidade() == Integer.parseInt(id))
-                nome = listaCidade.get(i).getNomeCidade();
-        }
-
-        return nome;
-    }
-
-
-
-    public void checkBox(View view) {
-
-        boolean checked = ((CheckBox) view).isChecked();
-
-        switch(view.getId()) {
-            case R.id.chkRecursao:
-                if (checked)
-                {
-                    Toast.makeText(this, "Clicou em recursão", Toast.LENGTH_LONG).show();
-                }
-                break;
-
-            case R.id.chkDijkstra:
-                if (checked)
-                {
-                    Toast.makeText(this, "Clicou em Dijkstra", Toast.LENGTH_LONG).show();
-                }
-                break;
-        }
-    }
-
     public void preencherBacktracking()
     {
         for(int i = 0; i < matrizBacktracking.length; i++)
@@ -661,8 +587,6 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             lerArquivoCidadeJson();
-            //listaCompletaCidades();
-
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -671,9 +595,6 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             lerArquivoCaminhoJson();
-            preencherBacktracking();
-            //listaCompletacCaminhos();
-            //ExibirMatrizAdjacencia();
         } catch (IOException e) {
             e.printStackTrace();
         }

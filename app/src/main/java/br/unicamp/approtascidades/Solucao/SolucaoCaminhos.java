@@ -205,7 +205,7 @@ public class SolucaoCaminhos  extends Activity
     }
 
 
-    public PilhaLista<CaminhoCidade> MenorCaminhoBacktracking(int linhas,  List<PilhaLista<CaminhoCidade>> cListaCaminhos, String criterio) throws Exception {
+    public PilhaLista<CaminhoCidade> MenorCaminhoBacktracking(int linhas,  List<PilhaLista<CaminhoCidade>> cListaCaminhos) throws Exception {
         int menorDado = 0;
         PilhaLista<CaminhoCidade> menorCaminho = null;
 
@@ -325,7 +325,7 @@ public class SolucaoCaminhos  extends Activity
     private PilhaLista<CaminhoCidade> MenorCaminho(int inicioDoPercurso, int finalDoPercurso)
     {
         // coleta os dados no vetor percurso do melhor caminho encontrado, do fim para o começo
-        // e o colocá em uma PilhaLista de CaminhoEntreCidades, retornando
+        // e o colocá em uma PilhaLista de CaminhoCidade, retornando
         int onde = finalDoPercurso;
         PilhaLista<CaminhoCidade> pilha = new PilhaLista<CaminhoCidade>();
 
