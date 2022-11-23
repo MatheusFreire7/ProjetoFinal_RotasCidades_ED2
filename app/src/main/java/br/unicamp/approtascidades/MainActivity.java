@@ -42,13 +42,9 @@ import br.unicamp.approtascidades.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
     Cidade vetorCidade[];
-    int matrizCaminho[][];
-    GrafoBactracking grafo;
-    Grafo oGrafo;
     List<Cidade> listaCidade = new ArrayList<Cidade>();
     List<CaminhoCidade> listaCaminhos = new ArrayList<CaminhoCidade>();
     PilhaLista<CaminhoCidade> pilhaCaminhos;
-    PilhaVetor<CaminhoCidade> caminhoAtual = new PilhaVetor<>();
     List<String> listaNomeCidades = new ArrayList<String>();
     ActivityMainBinding binding;
     List<PilhaLista<CaminhoCidade>> cListaCaminhos;
@@ -56,10 +52,8 @@ public class MainActivity extends AppCompatActivity {
     Cidade Origem;
     Cidade Destino;
     boolean mostrouCidade = false;
-    CaminhoCidade matrizBacktracking[][];
     SolucaoCaminhos solucaoCaminhos;
     List<PilhaLista> listaCaminhosEncontrados;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +72,12 @@ public class MainActivity extends AppCompatActivity {
         binding.chkRecursao.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View v) {
-                if(!mostrouCidade)
+            public void onClick(View v)
+            {
+                if(!mostrouCidade) // esse if é feito para não exibir mais de uma vez as cidades do método mostrarCidades()
                 {
-                    MostrarCidades();
-                    mostrouCidade = true;
+                    MostrarCidades(); //Mostramos as cidades no mapa
+                    mostrouCidade = true; //recebe true para não exibirmos novamente as cidades
                 }
 
             }
@@ -92,19 +87,21 @@ public class MainActivity extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                if(!mostrouCidade)
+                if(!mostrouCidade) // esse if é feito para não exibir mais de uma vez as cidades do método mostrarCidades()
                 {
-                    MostrarCidades();
-                    mostrouCidade = true;
+                    MostrarCidades(); //Mostramos as cidades no mapa
+                    mostrouCidade = true;  //recebe true para não exibirmos novamente as cidades
                 }
 
             }
         });
 
-        binding.gvLista.setOnItemClickListener(new GridView.OnItemClickListener() {
+        binding.gvLista.setOnItemClickListener(new GridView.OnItemClickListener()
+        {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getBaseContext(), parent.getItemAtPosition(position).toString(), Toast.LENGTH_SHORT).show();
+                //Exibimos uma mensagem para o usuário o item que ele clicou no GridView
             }
         });
 
@@ -122,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
                         int idDestino = buscarId(String.valueOf(nomeCidadeDestino));
 
-                        if(idOrigem == idDestino)
+                        if(idOrigem == idDestino) // se verdade Mesma Cidade
                             Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
 
                          cListaCaminhos = solucaoCaminhos.BuscarCaminhosRec(idOrigem, idDestino);
@@ -135,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                         int linhas = cListaCaminhos.size();
                         List resultado = new ArrayList();
                         resultado.add("Cidades que passou");
-                        PilhaLista<CaminhoCidade> pilhaCam = null;
+                        PilhaLista<CaminhoCidade> pilhaCam = null; //Pilhas auxiliares na busca de caminhos
                         PilhaLista<CaminhoCidade> copia = null;
                         for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
                         {
@@ -158,10 +155,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if(resultado.size() > 1) //resultado != " "
                         {
+                            //Exibimos no GridView o resultado
                             ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
                             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
                             binding.gvLista.setAdapter(adapterString);
-                            DesenharCaminho(copia);
+                            DesenharCaminho(copia); //desenhamos o caminho que está armazenado na pilhaLista<CaminhoCidade> copia
                         }
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
@@ -204,10 +202,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                         if(resultado.size() > 1)
                         {
+                            //Exibimos no GridView o resultado
                             ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
                             adapterString.setDropDownViewResource(android.R.layout.simple_list_item_1);
                             binding.gvLista.setAdapter(adapterString);
-                            DesenharCaminho(copia);
+                            DesenharCaminho(copia); //desenhamos o caminho que está armazenado na pilhaLista<CaminhoCidade> copia
                         }
                         else
                             Toast.makeText(MainActivity.this, "Não encontramos Caminhos entre estas Cidades", Toast.LENGTH_SHORT).show();
@@ -301,8 +300,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-    public void listaCompletaCidades(){
+    public void listaCompletaCidades() //Este método exibe todas as cidades no Run do Android Studio
+    {
         if(listaCidade != null){
             for(int i = 0; i< listaCidade.size(); i++){
                 System.out.println("Nome: "+listaCidade.get(i).getNomeCidade());
@@ -316,7 +315,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void listaCompletacCaminhos(){
+    public void listaCompletacCaminhos() //Este método exibe todas os caminhos no Run do Android Studio
+    {
         if(listaCaminhos != null){
             for(int i = 0; i< listaCaminhos.size(); i++){
                 System.out.println("Origem: "+listaCaminhos.get(i).getIdOrigem());
@@ -332,7 +332,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void lerArquivoCaminhoJson() throws IOException {
+    public void lerArquivoCaminhoJson() throws IOException
+    {
         try {
             AssetManager assetManager = getResources().getAssets();
             InputStream inputStream = assetManager.open("caminhosCidades.json"); //abrimos o arquivo na pasta assets
@@ -352,13 +353,8 @@ public class MainActivity extends AppCompatActivity {
                 CaminhoCidade umCam = new CaminhoCidade(idOrigem.trim(),idDestino.trim(),Integer.parseInt(distancia.trim()),Integer.parseInt(tempo.trim()),Integer.parseInt(custo.trim())); //Criamos um novo caminho a partir da linha lida
                 CaminhoCidade caminhoMatriz = new CaminhoCidade(Integer.parseInt(distancia.trim()),Integer.parseInt(tempo.trim()),Integer.parseInt(custo.trim()));
                 listaCaminhos.add(umCam); //adicionamos o caminho a lista de caminhos
-                caminhoAtual.Empilhar(umCam); //empilhamos o caminho na pilha
-                matrizBacktracking[Integer.parseInt(umCam.getIdOrigem())][Integer.parseInt(umCam.getIdDestino())] = umCam;
-                if(contCidades < 23)
-                    matrizCaminho[contCidades][contCidades] = caminhoMatriz.getDistancia();
                 contCidades++;
             }
-            grafo.setAdjacencia(matrizCaminho); //set o grafo com a matrizCaminho
             inputStream.close(); //Fechamos o Arquivo
         }
         catch (IOException | JSONException e) {
@@ -367,7 +363,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    public void lerArquivoCaminhoTexto() throws IOException {
+    public void lerArquivoCaminhoTexto() throws IOException
+    {
         try {
             AssetManager assetManager = getResources().getAssets();
             InputStream inputStream = assetManager.open("CaminhosEntreCidadesMarte.txt");
@@ -378,7 +375,6 @@ public class MainActivity extends AppCompatActivity {
             while ((linha = bufferedReader.readLine())!= null){
                 linhas.add(linha);
             }
-            grafo.setAdjacencia(matrizCaminho);
             inputStream.close();
         }
         catch (IOException  e) {
@@ -386,40 +382,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void ExibirMatrizAdjacencia()
-    {
-        for(int i = 0; i < matrizCaminho.length; i++)
-        {
-            for(int j = 0; j< matrizCaminho.length; j++)
-            {
-                if(j != matrizCaminho.length-1)
-                    System.out.print(" " + matrizCaminho[i][j]);
-                else
-                    System.out.print(" " + matrizCaminho[i][j] + "\n");
-            }
-        }
-    }
-
-    public void MontarGrafodDjikstra()
-    {
-        for(int i = 0; i < listaCidade.size(); i++ )
-        {
-            oGrafo.NovoVertice(listaCidade.get(i).getIdCidade() + "");
-        }
-
-        for (int i = 0; i < Math.pow(listaCaminhos.size(), 0.5); i++)
-        {
-            for (int j = 0; j < Math.pow(listaCaminhos.size(), 0.5); j++)
-            {
-                if (matrizCaminho[i][j] != 0)
-                {
-                    oGrafo.NovaAresta(i, j, matrizCaminho[i][j]);
-                }
-            }
-        }
-    }
-
-    public int buscarId(String nomeCidade)
+    public int buscarId(String nomeCidade) //Busca o id da Cidade pelo nomeCidade que está no parâmetro do método na listaCidade
     {
         int idCidade = 0;
         for(int i = 0; i < listaCidade.size(); i++)
@@ -432,7 +395,7 @@ public class MainActivity extends AppCompatActivity {
         return idCidade;
     }
 
-    public Cidade buscarCidade(int idCidade)
+    public Cidade buscarCidade(int idCidade) //Busca a Cidade pelo idCidade na listaCidade
     {
         Cidade umCid = null;
 
@@ -445,7 +408,8 @@ public class MainActivity extends AppCompatActivity {
         return umCid;
     }
 
-    public void DesenharCaminho(PilhaLista<CaminhoCidade> caminho) throws Exception {
+    public void DesenharCaminho(PilhaLista<CaminhoCidade> caminho) throws Exception // Método que desenha o caminho encontrado
+    {
         Paint paint =  new Paint(); // instanciamos a classe Paint
         paint.setColor(Color.BLACK); //setamos os atributos cor e tamanho de texto
         paint.setTextSize(20);
@@ -468,7 +432,7 @@ public class MainActivity extends AppCompatActivity {
         binding.mapa.setImageBitmap(bitmap);
     }
 
-    public void MostrarCidades()
+    public void MostrarCidades() //Método que mostra todas as cidades que estão na listaCidade
     {
             Paint paint =  new Paint(); // instanciamos a classe Paint
             paint.setColor(Color.BLACK); //setamos os atributos cor e tamanho de texto
@@ -499,7 +463,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void ExibirTodosCaminhos()
+    public void ExibirTodosCaminhosLidos() // Exibe todos os caminhos que estão na listaCaminhos
     {
         Paint paint =  new Paint();
         paint.setColor(Color.BLACK);
@@ -555,47 +519,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void preencherBacktracking()
-    {
-        for(int i = 0; i < matrizBacktracking.length; i++)
-        {
-            for (int j = 0; j < matrizBacktracking.length; j++)
-            {
-                if(matrizBacktracking[i][j] == null)
-                {
-                    CaminhoCidade caminhoCidade = new CaminhoCidade(" "," ", 0,0,0);
-                    matrizBacktracking[i][j] = caminhoCidade;
-                }
-            }
-        }
-    }
 
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
+
+        //Instanciação das classes e estruturas de dados que utilizaremos na execução do aplicativo
         cListaCaminhos = new ArrayList<>();
-        oGrafo = new Grafo(numCidades,numCidades);
         vetorCidade = new Cidade[numCidades];
         listaCaminhos = new ArrayList<CaminhoCidade>();
-        matrizCaminho = new int[numCidades][numCidades];
-        grafo = new GrafoBactracking(numCidades, numCidades);
         pilhaCaminhos = new PilhaLista<>();
-        matrizBacktracking = new CaminhoCidade[numCidades][numCidades];
         solucaoCaminhos = new SolucaoCaminhos(getBaseContext());
+
 
         try
         {
-            lerArquivoCidadeJson();
+            lerArquivoCidadeJson(); //Lemos o arquivo de Cidade em Json
         } catch (IOException e)
         {
+            Toast.makeText(getBaseContext(), "Falha na Leitura do Arquivo", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
 
         try
         {
-            lerArquivoCaminhoJson();
-        } catch (IOException e) {
+            lerArquivoCaminhoJson();  //Lemos o arquivo de Caminhos em Json
+        } catch (IOException e)
+        {
+            Toast.makeText(getBaseContext(), "Falha na Leitura do Arquivo", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
