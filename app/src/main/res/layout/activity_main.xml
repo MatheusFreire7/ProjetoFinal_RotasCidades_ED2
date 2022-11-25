@@ -69,12 +69,30 @@
             android:layout_toRightOf="@id/chkRecursao"
             android:text="Buscar" />
 
+        <Button
+            android:id="@+id/btnCaminhosArquivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnBuscar"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/chkRecursao"
+            android:text="Caminhos" />
+
+        <Button
+            android:id="@+id/btnApagar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnCaminhosArquivo"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/chkRecursao"
+            android:text="Apagar" />
+
 
             <GridView
                 android:id="@+id/gvLista"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/chkDijkstra"
+                android:layout_below="@id/btnApagar"
                 android:numColumns="1"
                 android:scrollbars="vertical" />
 

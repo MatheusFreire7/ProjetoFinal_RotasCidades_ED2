@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -106,11 +107,34 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        binding.btnApagar.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                binding.mapa.setImageDrawable(getResources().getDrawable(R.drawable.mapa)); //Setamos a imagem no ImageView original do mapa
+                MostrarCidades(); //Mostramos novamente as cidade
+                List<String> vazio = new ArrayList<String>(); //ArrayList que será responsável por deixar o gridView vazio
+                ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, vazio);
+                adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                binding.gvLista.setAdapter(adapterString);
+            }
+        });
+
+        binding.btnCaminhosArquivo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                ExibirTodosCaminhosLidos();
+                //Exibimos os caminhos encontrados a partir do arquivo lido
+            }
+        });
+
 
         binding.btnBuscar.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 try {
                     boolean checkedRecursao = ((CheckBox) binding.chkRecursao).isChecked(); // vericamos se os checkedBox estão clicados
                     boolean checkedDijkstra = ((CheckBox) binding.chkDijkstra).isChecked();
