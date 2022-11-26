@@ -157,7 +157,7 @@ public class SolucaoCaminhos  extends Activity
                 while ((saidaAtual < qtasCidades) && !achouCaminho)
                 {
                     // se não há saída pela cidade testada, verifica a próxima
-                    if (matriz[cidadeAtual][saidaAtual].getCusto() == infinity)
+                    if (matriz[cidadeAtual][saidaAtual].getDistancia() == infinity)
                     saidaAtual++;
                         else // há caminho da cidade atual pra saida
                     if (passou[saidaAtual])

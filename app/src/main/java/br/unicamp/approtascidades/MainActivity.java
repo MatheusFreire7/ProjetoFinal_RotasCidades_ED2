@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     boolean mostrouCidade = false; //Boolean para verificar se já mostrou as cidades no Mapa de Marte
     SolucaoCaminhos solucaoCaminhos; // Classe que possui a busca de Caminhos em djikstra e Backtracking recursivo
     List<PilhaLista> listaCaminhosEncontrados; //lista de Caminhos Encontrados
+    PilhaLista<CaminhoCidade> menorCaminho;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity
                             Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
 
                          cListaCaminhos = solucaoCaminhos.BuscarCaminhosRec(idOrigem, idDestino);
+                         menorCaminho = solucaoCaminhos.MenorCaminhoBacktracking(cListaCaminhos.size(), cListaCaminhos);
                          // retorna lista de caminhos possiveis entre as cidades selecionadas
                         // copia da lista de caminhos p / manipulá - la sem estragar os dados, os quais serão utilizados posteriormente
                         listaCaminhosEncontrados = new ArrayList<>();
@@ -168,11 +170,13 @@ public class MainActivity extends AppCompatActivity
                             CaminhoCidade cidade = new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
                             Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
                             resultado.add(umCid.getNomeCidade());
-                            resultado.add("Distância: " + cidade.getDistancia());
                             pilhaCam.Desempilhar();
                         }
                         if(resultado.size() > 0)
                         {
+                            int total = solucaoCaminhos.getTotal(); // total é a distância do percurso
+                            resultado.add("Distância: " + total);
+                            //resultado.add(menorCaminho.OTopo().getIdOrigem());
                             //Exibimos no GridView o resultado da Busca de Caminhos
                             ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
                             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -539,6 +543,7 @@ public class MainActivity extends AppCompatActivity
         listaCaminhos = new ArrayList<CaminhoCidade>();
         pilhaCaminhos = new PilhaLista<>();
         solucaoCaminhos = new SolucaoCaminhos(getBaseContext());
+        menorCaminho = new PilhaLista<>();
 
         try
         {
