@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     SolucaoCaminhos solucaoCaminhos; // Classe que possui a busca de Caminhos em djikstra e Backtracking recursivo
     List<PilhaLista> listaCaminhosEncontrados; //lista de Caminhos Encontrados
     PilhaLista<CaminhoCidade> menorCaminho;
+    Bitmap mapaCidades = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -111,13 +113,20 @@ public class MainActivity extends AppCompatActivity
         binding.btnApagar.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void onClick(View view) {
-                binding.mapa.setImageDrawable(getResources().getDrawable(R.drawable.mapa)); //Setamos a imagem no ImageView original do mapa
-                MostrarCidades(); //Mostramos novamente as cidade
-                List<String> vazio = new ArrayList<String>(); //ArrayList que será responsável por deixar o gridView vazio
-                ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, vazio);
-                adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
-                binding.gvLista.setAdapter(adapterString);
+            public void onClick(View view)
+            {
+                if(mapaCidades != null)
+                {
+                    if(compare(mapaCidades, binding.mapa.getDrawingCache()))
+                    {
+                        binding.mapa.setImageDrawable(getResources().getDrawable(R.drawable.mapa)); //Setamos a imagem no ImageView original do mapa
+                        MostrarCidades(); //Mostramos novamente as cidade
+                        List<String> vazio = new ArrayList<String>(); //ArrayList que será responsável por deixar o gridView vazio
+                        ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, vazio);
+                        adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                        binding.gvLista.setAdapter(adapterString);
+                    }
+                }
             }
         });
 
@@ -402,6 +411,23 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private static boolean compare(Bitmap b1, Bitmap b2)
+    {
+        if (b1.getWidth() == b2.getWidth() && b1.getHeight() == b2.getHeight()) {
+            int[] pixels1 = new int[b1.getWidth() * b1.getHeight()];
+            int[] pixels2 = new int[b2.getWidth() * b2.getHeight()];
+            b1.getPixels(pixels1, 0, b1.getWidth(), 0, 0, b1.getWidth(), b1.getHeight());
+            b2.getPixels(pixels2, 0, b2.getWidth(), 0, 0, b2.getWidth(), b2.getHeight());
+            if (Arrays.equals(pixels1, pixels2)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public int buscarId(String nomeCidade) //Busca o id da Cidade pelo nomeCidade que está no parâmetro do método na listaCidade
     {
         int idCidade = 0;
@@ -477,6 +503,7 @@ public class MainActivity extends AppCompatActivity
                 binding.mapa.setImageBitmap(bitmap);
                 contCidades++;
             }
+            mapaCidades = bitmap;
             binding.mapa.setImageBitmap(bitmap);
     }
 
