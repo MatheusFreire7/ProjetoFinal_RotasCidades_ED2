@@ -53,9 +53,8 @@ public class MainActivity extends AppCompatActivity
     Cidade Destino; //Cidade Destino
     boolean mostrouCidade = false; //Boolean para verificar se já mostrou as cidades no Mapa de Marte
     SolucaoCaminhos solucaoCaminhos; // Classe que possui a busca de Caminhos em djikstra e Backtracking recursivo
-    List<PilhaLista> listaCaminhosEncontrados; //lista de Caminhos Encontrados
-    PilhaLista<CaminhoCidade> menorCaminho;
-    Bitmap mapaCidades = null;
+    List<PilhaLista<CaminhoCidade>> listaCaminhosEncontrados; //lista de Caminhos Encontrados
+    PilhaLista<CaminhoCidade> menorCaminho; //Menor caminho utilizando backtrackings
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -115,18 +114,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                if(mapaCidades != null)
-                {
-                    if(compare(mapaCidades, binding.mapa.getDrawingCache()))
-                    {
-                        binding.mapa.setImageDrawable(getResources().getDrawable(R.drawable.mapa)); //Setamos a imagem no ImageView original do mapa
-                        MostrarCidades(); //Mostramos novamente as cidade
-                        List<String> vazio = new ArrayList<String>(); //ArrayList que será responsável por deixar o gridView vazio
-                        ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, vazio);
-                        adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
-                        binding.gvLista.setAdapter(adapterString);
-                    }
-                }
+                binding.mapa.setImageDrawable(getResources().getDrawable(R.drawable.mapa)); //Setamos a imagem no ImageView original do mapa
+                MostrarCidades(); //Mostramos novamente as cidade
+                List<String> vazio = new ArrayList<String>(); //ArrayList que será responsável por deixar o gridView vazio
+                ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, vazio);
+                adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
+                binding.gvLista.setAdapter(adapterString);
             }
         });
 
@@ -154,6 +147,8 @@ public class MainActivity extends AppCompatActivity
                         int idOrigem = buscarId(String.valueOf(nomeCidadeOrigem));
                         Object nomeCidadeDestino = binding.numDestino.getSelectedItem();
                         int idDestino = buscarId(String.valueOf(nomeCidadeDestino));
+                        List<String> resultado = new ArrayList<String>();
+                        resultado.add("Cidades que passou");
 
                         if(idOrigem == idDestino) // se verdade Mesma Cidade
                             Toast.makeText(MainActivity.this, "Escolha Cidades Diferentes", Toast.LENGTH_LONG).show();
@@ -165,27 +160,26 @@ public class MainActivity extends AppCompatActivity
                         listaCaminhosEncontrados = new ArrayList<>();
                         for (int i = 0; i < cListaCaminhos.size(); i++)
                         {
-                            listaCaminhosEncontrados.add(cListaCaminhos.get(i).Copia());
+                            listaCaminhosEncontrados.add(cListaCaminhos.get(i).Copia()); //Adiciona os Caminhos Encontrados
                         }
-                        int linhas = cListaCaminhos.size();
-                        List<String> resultado = new ArrayList<String>();
-                        //resultado.add("Cidades que passou");
-                        PilhaLista<CaminhoCidade> pilhaCam = null; //Pilhas auxiliares na busca de caminhos
-                        PilhaLista<CaminhoCidade> copia = null;
+                        int linhas = cListaCaminhos.size(); //Pega o tamanho da lista
+                        PilhaLista<CaminhoCidade> pilhaCaminhos = null;
+                        PilhaLista<CaminhoCidade> copia = null; //Pilhas auxiliares na busca de caminhos
                         for (int lin = 0; lin < linhas; lin++) // percorre a lista de caminhos
                         {
-                            pilhaCam = cListaCaminhos.get(lin); // pega o lin-ésimo caminho
-                            copia = pilhaCam.Copia(); // faz-se cópia para não entragar os dados que serão utilizados posteriormente
-                            CaminhoCidade cidade = new CaminhoCidade(pilhaCam.OTopo().getIdOrigem(), pilhaCam.OTopo().getDistancia()); // exibe apenas a cidade origem
-                            Cidade umCid = buscarCidade(Integer.parseInt(pilhaCam.OTopo().getIdOrigem().trim()));
-                            resultado.add(umCid.getNomeCidade());
-                            pilhaCam.Desempilhar();
+                            pilhaCaminhos = cListaCaminhos.get(lin); // pega o lin-ésimo caminho
+                            copia = pilhaCaminhos.Copia();
+                            while(!pilhaCaminhos.EstaVazia())
+                            {
+                                Cidade umCid = buscarCidade(Integer.parseInt(pilhaCaminhos.OTopo().getIdDestino().trim()));
+                                resultado.add(umCid.getNomeCidade());
+                                pilhaCaminhos.Desempilhar();
+                            }
                         }
-                        if(resultado.size() > 0)
+                        if(resultado.size() > 1)
                         {
                             int total = solucaoCaminhos.getTotal(); // total é a distância do percurso
                             resultado.add("Distância: " + total);
-                            //resultado.add(menorCaminho.OTopo().getIdOrigem());
                             //Exibimos no GridView o resultado da Busca de Caminhos
                             ArrayAdapter<String> adapterString = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_list_item_1, resultado);
                             adapterString.setDropDownViewResource(android.R.layout.simple_spinner_item);
@@ -411,19 +405,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private static boolean compare(Bitmap b1, Bitmap b2)
+
+    private static boolean compare(Bitmap b1, Bitmap b2) //Método de Comparar Bitmpaps
     {
-        if (b1.getWidth() == b2.getWidth() && b1.getHeight() == b2.getHeight()) {
+        if (b1.getWidth() == b2.getWidth() && b1.getHeight() == b2.getHeight())
+        {
             int[] pixels1 = new int[b1.getWidth() * b1.getHeight()];
             int[] pixels2 = new int[b2.getWidth() * b2.getHeight()];
             b1.getPixels(pixels1, 0, b1.getWidth(), 0, 0, b1.getWidth(), b1.getHeight());
             b2.getPixels(pixels2, 0, b2.getWidth(), 0, 0, b2.getWidth(), b2.getHeight());
-            if (Arrays.equals(pixels1, pixels2)) {
+            if (Arrays.equals(pixels1, pixels2))
+            {
                 return true;
-            } else {
+            }
+            else
+            {
                 return false;
             }
-        } else {
+        }
+        else
+        {
             return false;
         }
     }
@@ -503,7 +504,6 @@ public class MainActivity extends AppCompatActivity
                 binding.mapa.setImageBitmap(bitmap);
                 contCidades++;
             }
-            mapaCidades = bitmap;
             binding.mapa.setImageBitmap(bitmap);
     }
 
@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity
         {
             contCidades = 0;
             int idOrigem = Integer.parseInt(listaCaminhos.get(contCaminhos).getIdOrigem());
-            int idDestino =Integer.parseInt(listaCaminhos.get(contCaminhos).getIdDestino());
+            int idDestino = Integer.parseInt(listaCaminhos.get(contCaminhos).getIdDestino());
             while(listaCidade.size() > contCidades)
             {
                 int id  = listaCidade.get(contCidades).getIdCidade();
