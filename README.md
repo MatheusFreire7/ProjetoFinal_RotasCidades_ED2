@@ -1,4 +1,4 @@
-# Projeto Final de Estrutura de Dados II - Aplicativo Android que Encontra Caminhos entre CidadeS de um mapa imaginário de Marte
+# Projeto Final de Estrutura de Dados II - Aplicativo Android que Encontra Caminhos entre Cidades de um mapa imaginário de Marte
 
 <div>
    <a href="https://github.com/MatheusFreire7">
